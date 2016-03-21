@@ -1,9 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
+
+<!-- 这个是用于显示搜索界面的布局，用于蓝牙和wifi搜索 -->
+
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/colorPrimaryLight">
 
+    <!-- 这个是标题栏，不管它就可以了 -->
     <include layout="@layout/title_layout" />
 
 

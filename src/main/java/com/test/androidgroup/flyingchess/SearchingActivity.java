@@ -13,10 +13,10 @@ import android.widget.TextView;
  */
 public class SearchingActivity extends Activity {
 
-    private TextView title;
-    private ImageView userImage;
-    private int playerNumber;
-    private int time = 0;
+    private TextView title;//标题上的字
+    private ImageView userImage;//用户头像
+    private int playerNumber;//玩游戏的人的数量
+    private int time = 0;//模拟的时候算时间用的
     private Context context;
 
     @Override
@@ -26,6 +26,7 @@ public class SearchingActivity extends Activity {
         context = this;
 
         Intent intent = getIntent();
+        //获取上一级选择的游戏人数，缺省为0
         playerNumber = intent.getIntExtra("playerNumber", 0);
 
         title = (TextView) findViewById(R.id.title);
@@ -33,7 +34,7 @@ public class SearchingActivity extends Activity {
         title.setText("搜索中.");
 
 
-        //以下只是一个模拟搜索的过程
+        //以下只是一个模拟搜索的过程，6s后会跳到游戏界面，实现的时候把这个删掉就行
         final Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             @Override

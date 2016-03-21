@@ -1,3 +1,4 @@
+<!-- 有一些控件的style我放在这里，大家如果需要的话尽情往下添加，不过不要修改已有的style -->
 <resources>
 
     <!-- Base application theme. -->
@@ -10,31 +11,13 @@
 
     <style name="tablayout_text" parent="Theme.AppCompat.Light.DarkActionBar">
         <item name="android:textSize">20sp</item>
+        <item name="android:color">@color/white</item>
     </style>
 
     <style name="hint_style" parent="Theme.AppCompat.Light.DarkActionBar">
-        <item name="android:textColor">@color/colorAccent</item>
-        <item name="android:textSize">20sp</item>
-    </style>
-
-    <style name="firstButtonStyle" parent="Theme.AppCompat.Light.DarkActionBar">
-        <item name="android:layout_marginBottom">10dp</item>
-        <item name="android:layout_marginRight">10dp</item>
-        <item name="android:layout_gravity">bottom|right</item>
-    </style>
-
-    <style name="secondButtonStyle" parent="Theme.AppCompat.Light.DarkActionBar">
-        <item name="android:layout_marginTop">10dp</item>
-        <item name="android:layout_marginRight">10dp</item>
-        <item name="android:layout_gravity">bottom|left</item>
-    </style>
-
-    <style name="thirdButtonStyle" parent="Theme.AppCompat.Light.DarkActionBar">
         <item name="android:textColor">@color/white</item>
-        <item name="android:textSize">18sp</item>
-        <item name="android:layout_marginRight">10dp</item>
-        <item name="android:layout_marginTop">10dp</item>
-        <item name="android:layout_gravity">right|top</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:textStyle">bold</item>
     </style>
 
     <style name="ButtonStyle" parent="Theme.AppCompat.Light.DarkActionBar">

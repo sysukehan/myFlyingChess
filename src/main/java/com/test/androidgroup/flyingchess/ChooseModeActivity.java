@@ -66,11 +66,13 @@ public class ChooseModeActivity extends Activity {
             }
         }, 300);
 
+        //为4个主模式的按钮绑定监听器
         one.setOnClickListener(new BigModeClick());
         two.setOnClickListener(new BigModeClick());
         three.setOnClickListener(new BigModeClick());
         four.setOnClickListener(new BigModeClick());
 
+        //为12个副模式的按钮绑定监听器
         one_one.setOnClickListener(new SmallModeClick());
         one_two.setOnClickListener(new SmallModeClick());
         one_three.setOnClickListener(new SmallModeClick());
@@ -84,6 +86,7 @@ public class ChooseModeActivity extends Activity {
         four_two.setOnClickListener(new SmallModeClick());
         four_three.setOnClickListener(new SmallModeClick());
 
+        //为中间的大按钮绑定监听器
         main.setOnClickListener(new MainClick());
 
     }
@@ -145,6 +148,7 @@ public class ChooseModeActivity extends Activity {
         }
     }
 
+    //选完小模式之后要传的东西在这里改
     class SmallModeClick implements View.OnClickListener {
         @Override
         public void onClick(View view) {
@@ -298,6 +302,7 @@ public class ChooseModeActivity extends Activity {
         }
     }
 
+    //散开的动画效果，传入参数为动画的view，散开的半径，角度
     private void animationShow(View view, int radius, double degree) {
         if (view != null) {
             view.setVisibility(View.VISIBLE);
@@ -316,6 +321,7 @@ public class ChooseModeActivity extends Activity {
         set.start();
     }
 
+    //收缩的动画效果，传入参数为动画的view，散开的半径，角度
     private void animationHint(View view, int radius, double degree) {
         if (view != null) {
             view.setVisibility(View.VISIBLE);

@@ -9,7 +9,7 @@ import android.widget.TextView;
  */
 public class GameActivity extends Activity {
 
-    private TextView title;
+    private TextView title;//标题上的字
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
