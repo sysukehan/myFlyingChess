@@ -24,14 +24,14 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:gravity="center"
-                android:hint="please enter your name"
+                android:hint="请输入你的用户名"
                 android:textColorHint="@color/colorAccentDark"
                 android:inputType="text"
                 android:maxLines="1"
                 android:textColor="@color/white"
                 android:textCursorDrawable="@drawable/color_cursor"
-                android:textSize="25sp"
-                android:padding="15dp"/>
+                android:textSize="20sp"
+                android:padding="15dp" />
 
         </android.support.design.widget.TextInputLayout>
 
@@ -47,13 +47,13 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:gravity="center"
-                android:hint="please enter your password"
+                android:hint="请输入你的密码"
                 android:textColorHint="@color/colorAccentDark"
                 android:inputType="textPassword"
                 android:maxLines="1"
                 android:textColor="@color/white"
                 android:textCursorDrawable="@drawable/color_cursor"
-                android:textSize="25sp"
+                android:textSize="20sp"
                 android:padding="15dp"/>
 
         </android.support.design.widget.TextInputLayout>
@@ -70,4 +70,5 @@
             android:textSize="20sp" />
 
     </LinearLayout>
+
 </RelativeLayout>

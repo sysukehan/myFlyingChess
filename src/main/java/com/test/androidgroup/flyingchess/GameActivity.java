@@ -16,6 +16,6 @@ public class GameActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.game_layout);
         title = (TextView) findViewById(R.id.title);
-        title.setText("桌号");
+        title.setText("游戏中");
     }
 }

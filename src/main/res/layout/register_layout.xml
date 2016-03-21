@@ -16,7 +16,7 @@
             android:id="@+id/register_username"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="30dp"
+            android:layout_marginBottom="20dp"
             app:hintTextAppearance="@style/hint_style">
 
             <EditText
@@ -24,13 +24,13 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:gravity="center"
-                android:hint="please enter your name"
+                android:hint="请输入你的手机号"
                 android:textColorHint="@color/colorAccentDark"
-                android:inputType="text"
+                android:inputType="phone"
                 android:maxLines="1"
                 android:textColor="@color/white"
                 android:textCursorDrawable="@drawable/color_cursor"
-                android:textSize="25sp"
+                android:textSize="20sp"
                 android:padding="15dp"/>
 
         </android.support.design.widget.TextInputLayout>
@@ -39,7 +39,7 @@
             android:id="@+id/register_password"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="30dp"
+            android:layout_marginBottom="20dp"
             app:hintTextAppearance="@style/hint_style">
 
             <EditText
@@ -47,13 +47,13 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:gravity="center"
-                android:hint="please enter your password"
+                android:hint="请设置你的密码"
                 android:textColorHint="@color/colorAccentDark"
                 android:inputType="textPassword"
                 android:maxLines="1"
                 android:textColor="@color/white"
                 android:textCursorDrawable="@drawable/color_cursor"
-                android:textSize="25sp"
+                android:textSize="20sp"
                 android:padding="15dp"/>
 
         </android.support.design.widget.TextInputLayout>
@@ -62,7 +62,7 @@
             android:id="@+id/register_password_again"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="30dp"
+            android:layout_marginBottom="20dp"
             app:hintTextAppearance="@style/hint_style">
 
             <EditText
@@ -70,17 +70,60 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:gravity="center"
-                android:hint="please enter your password again"
+                android:hint="请确认你的密码"
                 android:textColorHint="@color/colorAccentDark"
                 android:inputType="textPassword"
                 android:maxLines="1"
                 android:textColor="@color/white"
                 android:textCursorDrawable="@drawable/color_cursor"
-                android:textSize="25sp"
+                android:textSize="20sp"
                 android:padding="15dp"/>
 
         </android.support.design.widget.TextInputLayout>
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/identifying_code"
+                android:layout_weight="2"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:hintTextAppearance="@style/hint_style">
+
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:gravity="center"
+                    android:hint="请输入验证码"
+                    android:inputType="textPassword"
+                    android:maxLines="1"
+                    android:padding="15dp"
+                    android:textColor="@color/white"
+                    android:textColorHint="@color/colorAccentDark"
+                    android:textCursorDrawable="@drawable/color_cursor"
+                    android:textSize="20sp" />
+
+            </android.support.design.widget.TextInputLayout>
+
+            <ImageView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:layout_gravity="center"
+                android:layout_weight="1"/>
+
+            <Button
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:layout_gravity="center"
+                android:layout_weight="1"/>
+
+        </LinearLayout>
         <Button
             android:id="@+id/register"
             android:layout_width="wrap_content"

@@ -2,6 +2,7 @@ package com.test.androidgroup.flyingchess;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.design.widget.TextInputLayout;
@@ -111,6 +112,8 @@ public class LoginAndRegisterActivity extends Activity {
                 //登录成功逻辑实现
                 if (succeed) {
                     Toast.makeText(context, "login succeed", Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(context, ChooseModeActivity.class);
+                    startActivity(intent);
                 }
             }
         });
@@ -134,7 +137,7 @@ public class LoginAndRegisterActivity extends Activity {
                 //对用户名进行判断
                 if (username.equals("")) {
                     registerUsername.setErrorEnabled(true);
-                    registerUsername.setError("username is empty");//错误信息
+                    registerUsername.setError("手机号不能为空");//错误信息
                 } else {
                     registerUsername.setErrorEnabled(false);
                     succeed = true;
@@ -143,7 +146,7 @@ public class LoginAndRegisterActivity extends Activity {
                 //对密码进行判断
                 if (password.equals("")) {
                     registerPassword.setErrorEnabled(true);
-                    registerPassword.setError("password is empty");//错误信息
+                    registerPassword.setError("密码不能为空");//错误信息
                     succeed = false;
                     return;
                 } else {
@@ -154,7 +157,7 @@ public class LoginAndRegisterActivity extends Activity {
                 //对二次输入密码进行判断
                 if (!password.equals(passwordagain)) {
                     registerPasswordAgain.setErrorEnabled(true);
-                    registerPasswordAgain.setError("password is not the same");//错误信息
+                    registerPasswordAgain.setError("两次密码输入不相同");//错误信息
                     succeed = false;
                 } else {
                     registerPasswordAgain.setErrorEnabled(false);
@@ -164,6 +167,8 @@ public class LoginAndRegisterActivity extends Activity {
                 //注册成功逻辑实现
                 if (succeed) {
                     Toast.makeText(context, "register succeed", Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(context, ChooseModeActivity.class);
+                    startActivity(intent);
                 }
 
             }

@@ -3,9 +3,12 @@ package com.test.androidgroup.flyingchess;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.app.Activity;
+import android.content.ComponentName;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -68,6 +71,19 @@ public class ChooseModeActivity extends Activity {
         three.setOnClickListener(new BigModeClick());
         four.setOnClickListener(new BigModeClick());
 
+        one_one.setOnClickListener(new SmallModeClick());
+        one_two.setOnClickListener(new SmallModeClick());
+        one_three.setOnClickListener(new SmallModeClick());
+        two_one.setOnClickListener(new SmallModeClick());
+        two_two.setOnClickListener(new SmallModeClick());
+        two_three.setOnClickListener(new SmallModeClick());
+        three_one.setOnClickListener(new SmallModeClick());
+        three_two.setOnClickListener(new SmallModeClick());
+        three_three.setOnClickListener(new SmallModeClick());
+        four_one.setOnClickListener(new SmallModeClick());
+        four_two.setOnClickListener(new SmallModeClick());
+        four_three.setOnClickListener(new SmallModeClick());
+
         main.setOnClickListener(new MainClick());
 
     }
@@ -126,6 +142,120 @@ public class ChooseModeActivity extends Activity {
                 }
             });
 
+        }
+    }
+
+    class SmallModeClick implements View.OnClickListener {
+        @Override
+        public void onClick(View view) {
+
+            if (view.getAlpha() <= 0) return;
+
+            Intent intent;
+            Bundle data = new Bundle();
+
+            switch(view.getId()) {
+
+                //1个人VS1个电脑的模式被选中
+                case R.id.one_one:
+                    intent = new Intent(context, GameActivity.class);
+                    data.putInt("playerNumber", 2);
+                    intent.putExtras(data);
+                    startActivity(intent);
+                    break;
+
+                //1个人VS2个电脑的模式被选中
+                case R.id.one_two:
+                    intent = new Intent(context, GameActivity.class);
+                    data.putInt("playerNumber", 3);
+                    intent.putExtras(data);
+                    startActivity(intent);
+                    break;
+
+                //1个人VS3个电脑的模式被选中
+                case R.id.one_three:
+                    intent = new Intent(context, GameActivity.class);
+                    data.putInt("playerNumber", 4);
+                    intent.putExtras(data);
+                    //Log.d("flyingchess", "hehe");
+                    startActivity(intent);
+                    break;
+
+                //2人房间对战的模式被选中
+                case R.id.two_one:
+                    intent = new Intent(context, ChooseRoomActivity.class);
+                    data.putInt("playerNumber", 2);
+                    intent.putExtras(data);
+                    startActivity(intent);
+                    break;
+
+                //3人房间对战的模式被选中
+                case R.id.two_two:
+                    intent = new Intent(context, ChooseRoomActivity.class);
+                    data.putInt("playerNumber", 3);
+                    intent.putExtras(data);
+                    startActivity(intent);
+                    break;
+
+                //4人房间对战的模式被选中
+                case R.id.two_three:
+                    intent = new Intent(context, ChooseRoomActivity.class);
+                    data.putInt("playerNumber", 4);
+                    intent.putExtras(data);
+                    startActivity(intent);
+                    break;
+
+                //wifi下2人对战的模式被选中
+                case R.id.three_one:
+                    intent = new Intent(context, SearchingActivity.class);
+                    data.putInt("playerNumber", 2);
+                    intent.putExtras(data);
+                    startActivity(intent);
+                    break;
+
+                //wifi下3人对战的模式被选中
+                case R.id.three_two:
+                    intent = new Intent(context, SearchingActivity.class);
+                    data.putInt("playerNumber", 3);
+                    intent.putExtras(data);
+                    startActivity(intent);
+                    break;
+
+                //wifi下4人对战的模式被选中
+                case R.id.three_three:
+                    intent = new Intent(context, SearchingActivity.class);
+                    data.putInt("playerNumber", 4);
+                    intent.putExtras(data);
+                    startActivity(intent);
+                    break;
+
+                //蓝牙下2人对战的模式被选中
+                case R.id.four_one:
+                    intent = new Intent(context, SearchingActivity.class);
+                    data.putInt("playerNumber", 2);
+                    intent.putExtras(data);
+                    startActivity(intent);
+                    break;
+
+                //蓝牙下3人对战的模式被选中
+                case R.id.four_two:
+                    intent = new Intent(context, SearchingActivity.class);
+                    data.putInt("playerNumber", 3);
+                    intent.putExtras(data);
+                    startActivity(intent);
+                    break;
+
+                //蓝牙下4人对战的模式被选中
+                case R.id.four_three:
+                    intent = new Intent(context, SearchingActivity.class);
+                    data.putInt("playerNumber", 4);
+                    intent.putExtras(data);
+                    startActivity(intent);
+                    break;
+
+                default:
+                    break;
+            }
         }
     }
 
