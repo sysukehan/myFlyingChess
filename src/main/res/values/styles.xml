@@ -16,7 +16,7 @@
 
     <style name="hint_style" parent="Theme.AppCompat.Light.DarkActionBar">
         <item name="android:textColor">@color/white</item>
-        <item name="android:textSize">20sp</item>
+        <item name="android:textSize">15sp</item>
         <item name="android:textStyle">bold</item>
     </style>
 

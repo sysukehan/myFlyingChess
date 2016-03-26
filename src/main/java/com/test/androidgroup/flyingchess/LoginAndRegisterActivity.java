@@ -16,6 +16,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -38,8 +39,10 @@ public class LoginAndRegisterActivity extends Activity {
 
     private Button loginButton;//登录按钮
     private Button registerButton;//注册按钮
-    private TextInputLayout loginUsername;//登录用户名
+    private TextView loginAnonymous;//匿名登录按钮
+    private TextInputLayout loginUserId;//登录用户名
     private TextInputLayout loginPassword;//登录密码
+    private TextInputLayout registerUserId;//注册id
     private TextInputLayout registerUsername;//注册用户名
     private TextInputLayout registerPassword;//注册密码
     private TextInputLayout registerPasswordAgain;//注册密码确认
@@ -77,9 +80,18 @@ public class LoginAndRegisterActivity extends Activity {
         mTabLayout.setupWithViewPager(mViewPager);//将TabLayout和ViewPager关联起来。
         mTabLayout.setTabsFromPagerAdapter(mAdapter);//给Tabs设置适配器
 
+        //获得匿名登录按钮
+        loginAnonymous = (TextView) findViewById(R.id.anonymous_login);
+        loginAnonymous.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(context, "匿名登录", Toast.LENGTH_SHORT).show();
+            }
+        });
+
         //获得登录按钮，用户名输入框和密码输入框
         loginButton = (Button) view1.findViewById(R.id.login);
-        loginUsername = (TextInputLayout) view1.findViewById(R.id.login_username);
+        loginUserId = (TextInputLayout) view1.findViewById(R.id.login_userid);
         loginPassword = (TextInputLayout) view1.findViewById(R.id.login_password);
 
         //登录逻辑实现
@@ -87,33 +99,69 @@ public class LoginAndRegisterActivity extends Activity {
             @Override
             public void onClick(View view) {
                 //获取输入框字符串
-                String username = loginUsername.getEditText().getText().toString();
+                String userId = loginUserId.getEditText().getText().toString();
                 String password = loginPassword.getEditText().getText().toString();
                 boolean succeed = true;
                 //对用户名进行判断
-                if (username.equals("")) {
-                    loginUsername.setErrorEnabled(true);
-                    loginUsername.setError("username is empty");//错误信息
+                if (userId.equals("")) {
+                    loginUserId.setErrorEnabled(true);
+                    loginUserId.setError("id不能为空");//错误信息
                     succeed = false;
                 } else {
-                    loginUsername.setErrorEnabled(false);
+                    loginUserId.setErrorEnabled(false);
                     succeed = true;
+                }
+                if (userId.matches("^[A-Za-z0-9]+$")) {
+                    loginUserId.setErrorEnabled(false);
+                    succeed = true;
+                } else {
+                    loginUserId.setErrorEnabled(true);
+                    loginUserId.setError("id只能包含字母和数字");//错误信息
+                    succeed = false;
                 }
                 //对密码进行判断
                 if (password.equals("")) {
                     loginPassword.setErrorEnabled(true);
-                    loginPassword.setError("password is empty");//错误信息
+                    loginPassword.setError("密码不能为空");//错误信息
                     succeed = false;
                 } else {
                     loginPassword.setErrorEnabled(false);
                     succeed = true;
                 }
 
-                //登录成功逻辑实现
+                //密码不能有中文
+                if (!password.matches("^[A-Za-z0-9]+$")) {
+                    loginPassword.setErrorEnabled(true);
+                    loginPassword.setError("密码只能包含英文或数字");//错误信息
+                    succeed = false;
+                } else {
+                    loginPassword.setErrorEnabled(false);
+                    succeed = true;
+                }
+
+                //验证用户名密码的逻辑实现
+                //调用验证函数，返回值有三种，用户名不存在，密码错误，验证成功
                 if (succeed) {
-                    Toast.makeText(context, "login succeed", Toast.LENGTH_SHORT).show();
-                    Intent intent = new Intent(context, ChooseModeActivity.class);
-                    startActivity(intent);
+                    int returnSign = -1;
+                    /*
+                        此处与服务器交互获得返回值
+                    */
+                    switch (returnSign) {
+                        case 0:
+                            Toast.makeText(context, "用户名不存在", Toast.LENGTH_LONG).show();
+                            break;
+                        case 1:
+                            Toast.makeText(context, "密码错误", Toast.LENGTH_LONG).show();
+                            break;
+                        case 2:
+                            Toast.makeText(context, "登录成功", Toast.LENGTH_SHORT).show();
+                            Intent intent = new Intent(context, ChooseModeActivity.class);
+                            startActivity(intent);
+                            break;
+                        default:
+                            //服务器未响应的逻辑可能要写在这里
+                            break;
+                    }
                 }
             }
         });
@@ -121,6 +169,7 @@ public class LoginAndRegisterActivity extends Activity {
 
         //获得注册按钮，用户名输入框，密码输入框和密码确认输入框
         registerButton = (Button) view2.findViewById(R.id.register);
+        registerUserId = (TextInputLayout) view2.findViewById(R.id.register_userid);
         registerUsername = (TextInputLayout) view2.findViewById(R.id.register_username);
         registerPassword = (TextInputLayout) view2.findViewById(R.id.register_password);
         registerPasswordAgain = (TextInputLayout) view2.findViewById(R.id.register_password_again);
@@ -129,24 +178,45 @@ public class LoginAndRegisterActivity extends Activity {
             @Override
             public void onClick(View view) {
                 //获取输入框字符串
+                String userId = registerUserId.getEditText().getText().toString();
                 String username = registerUsername.getEditText().getText().toString();
                 String password = registerPassword.getEditText().getText().toString();
                 String passwordagain = registerPasswordAgain.getEditText().getText().toString();
                 boolean succeed = true;
 
-                //对用户名进行判断
+                //对id进行判断
+                if (userId.matches("^[A-Za-z0-9]+$")) {
+                    registerUserId.setErrorEnabled(false);
+                    succeed = true;
+                } else {
+                    registerUserId.setErrorEnabled(true);
+                    registerUserId.setError("id只能包含数字和字母");//错误信息
+                }
+
+                //对昵称是否为空进行判断
                 if (username.equals("")) {
                     registerUsername.setErrorEnabled(true);
-                    registerUsername.setError("手机号不能为空");//错误信息
+                    registerUsername.setError("昵称不能为空");//错误信息
                 } else {
                     registerUsername.setErrorEnabled(false);
                     succeed = true;
                 }
 
                 //对密码进行判断
-                if (password.equals("")) {
+                if (!password.matches("^[A-Za-z0-9]+$")) {
                     registerPassword.setErrorEnabled(true);
                     registerPassword.setError("密码不能为空");//错误信息
+                    succeed = false;
+                    return;
+                } else {
+                    registerPassword.setErrorEnabled(false);
+                    succeed = true;
+                }
+
+                //密码不能有中文
+                if (password.equals("")) {
+                    registerPassword.setErrorEnabled(true);
+                    registerPassword.setError("密码只能包含英文或数字");//错误信息
                     succeed = false;
                     return;
                 } else {
@@ -164,11 +234,28 @@ public class LoginAndRegisterActivity extends Activity {
                     succeed = true;
                 }
 
-                //注册成功逻辑实现
+                //与服务器交互的逻辑实现
                 if (succeed) {
-                    Toast.makeText(context, "register succeed", Toast.LENGTH_SHORT).show();
-                    Intent intent = new Intent(context, ChooseModeActivity.class);
-                    startActivity(intent);
+                    //服务器返回两个值，0代表由于id与已注册用户用户相同导致注册失败，1代表注册成功，跳转至模式选择界面
+                    int registerReturnSign = -1;
+                    /*
+                        访问服务器
+                     */
+                    switch(registerReturnSign) {
+                        case 0:
+                            registerUserId.setErrorEnabled(true);
+                            registerUserId.setError("该id已注册，换一个吧");//错误信息
+                            break;
+                        case 1:
+                            Toast.makeText(context, "register succeed", Toast.LENGTH_SHORT).show();
+                            Intent intent = new Intent(context, ChooseModeActivity.class);
+                            String md5Password = MD5.getInstance().getMD5(password);
+                            startActivity(intent);
+                            break;
+                        default:
+                            //超时的响应可能要放在这里进行
+                            break;
+                    }
                 }
 
             }

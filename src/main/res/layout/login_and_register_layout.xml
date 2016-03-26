@@ -16,6 +16,20 @@
         app:tabSelectedTextColor="@color/white"
         app:tabTextColor="@color/disabledWhite" />
 
+    <TextView
+        android:id="@+id/anonymous_login"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="匿名登录"
+        android:textSize="20sp"
+        android:textColor="@color/white"
+        android:drawableRight="@mipmap/point_right"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="10dp"
+        android:drawablePadding="5dp"
+        android:gravity="center"
+        android:layout_gravity="right"/>
+
     <android.support.v4.view.ViewPager
         android:id="@+id/vp_FindFragment_pager"
         android:layout_width="fill_parent"
