@@ -3,6 +3,7 @@ package com.test.androidgroup.flyingchess;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.design.widget.TextInputLayout;
@@ -46,6 +47,9 @@ public class LoginAndRegisterActivity extends Activity {
     private TextInputLayout registerUsername;//注册用户名
     private TextInputLayout registerPassword;//注册密码
     private TextInputLayout registerPasswordAgain;//注册密码确认
+
+    private SharedPreferences userInformation;//存储用户信息
+    private SharedPreferences.Editor editor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
