@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
 /**
@@ -66,6 +67,12 @@ public class ChooseModeActivity extends Activity {
             }
         }, 300);
 
+
+        if (RunningInformation.isAnonymous) {
+            two.setBackgroundDrawable(getResources().getDrawable(R.drawable.disabled_mode_button));
+            two.setTextColor(getResources().getColor(R.color.disabledWhite));
+        }
+
         //为4个主模式的按钮绑定监听器
         one.setOnClickListener(new BigModeClick());
         two.setOnClickListener(new BigModeClick());
@@ -103,6 +110,10 @@ public class ChooseModeActivity extends Activity {
                     main.setText(one.getText());
                     break;
                 case R.id.two:
+                    if (RunningInformation.isAnonymous) {
+                        Toast.makeText(context, "需要先登录才能进入房间", Toast.LENGTH_LONG).show();
+                        return;
+                    }
                     whichIsShow = 1;
                     animationShow(two_one, 300, 30);
                     animationShow(two_two, 300, 150);

@@ -85,7 +85,9 @@ public class LoginAndRegisterActivity extends Activity {
         loginAnonymous.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(context, "匿名登录", Toast.LENGTH_SHORT).show();
+                RunningInformation.isAnonymous = true;
+                Intent intent = new Intent(context, ChooseModeActivity.class);
+                startActivity(intent);
             }
         });
 
@@ -142,7 +144,7 @@ public class LoginAndRegisterActivity extends Activity {
                 //验证用户名密码的逻辑实现
                 //调用验证函数，返回值有三种，用户名不存在，密码错误，验证成功
                 if (succeed) {
-                    int returnSign = -1;
+                    int returnSign = 2;
                     /*
                         此处与服务器交互获得返回值
                     */
@@ -155,6 +157,7 @@ public class LoginAndRegisterActivity extends Activity {
                             break;
                         case 2:
                             Toast.makeText(context, "登录成功", Toast.LENGTH_SHORT).show();
+                            RunningInformation.isAnonymous = false;
                             Intent intent = new Intent(context, ChooseModeActivity.class);
                             startActivity(intent);
                             break;
@@ -247,9 +250,18 @@ public class LoginAndRegisterActivity extends Activity {
                             registerUserId.setError("该id已注册，换一个吧");//错误信息
                             break;
                         case 1:
-                            Toast.makeText(context, "register succeed", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(context, "注册成功", Toast.LENGTH_SHORT).show();
+                            RunningInformation.isAnonymous = false;
+                            RunningInformation.playerId = userId;
+                            RunningInformation.md5Password = MD5.getInstance().getMD5(password);
+                            RunningInformation.playerName = username;
+                            RunningInformation.sumMatches = 0;
+                            RunningInformation.exceedSumMatches = 0;
+                            RunningInformation.winMatches = 0;
+                            RunningInformation.exceedWinMatches = 0;
+                            RunningInformation.percent = 0;
+                            RunningInformation.exceedPercent = 0;
                             Intent intent = new Intent(context, ChooseModeActivity.class);
-                            String md5Password = MD5.getInstance().getMD5(password);
                             startActivity(intent);
                             break;
                         default:
