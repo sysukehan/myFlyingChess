@@ -12,7 +12,7 @@ import android.widget.TextView;
  * Created by kehan on 16-3-21.
  */
 
-public class PersonalInformationActivity extends Activity {
+public class PersonalInformationActivity extends FlyingChessActivity {
 
     private ImageView image;
     private TextView title;

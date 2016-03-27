@@ -6,11 +6,13 @@ import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.media.Image;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -18,13 +20,16 @@ import android.widget.Toast;
 /**
  * Created by kehan on 16-3-21.
  */
-public class ChooseModeActivity extends Activity {
+public class ChooseModeActivity extends FlyingChessActivity {
 
     private Button main, one, two, three, four, one_one, one_two, one_three, two_one, two_two, two_three,
             three_one, three_two, three_three, four_one, four_two, four_three;
     private Context context;
-    private TextView title;
-    private int whichIsShow = -1;
+    private ImageView back;//返回键，
+    private TextView title;//标题
+    private ImageView userImage;//用户头像
+    private int whichIsShow = -1;//模式判断
+    private int leave = 0;//离开判断
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -32,10 +37,46 @@ public class ChooseModeActivity extends Activity {
         setContentView(R.layout.choose_mode_layout);
         context = this;
         initView();
+        back = (ImageView) findViewById(R.id.back);
+        title = (TextView) findViewById(R.id.title);
+        userImage = (ImageView) findViewById(R.id.user_image);
+        //设置标题文字
+        title.setText("选择模式");
+        //如果匿名登录，头像不可见；非匿名登录，绑定点击进入个人资料界面的监听器
+        if (RunningInformation.isAnonymous) {
+            userImage.setVisibility(View.GONE);
+        } else {
+            userImage.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent newIntent = new Intent(context, PersonalInformationActivity.class);
+                    startActivity(newIntent);
+                }
+            });
+        }
+
+        //为自定义返回键绑定监听器
+        back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                leave++;
+                if (leave >= 2) {
+                    ActivityCollector.finishAll();
+                } else {
+                    Handler handler = new Handler();
+                    handler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            leave--;
+                        }
+                    }, 2000);
+                }
+            }
+        });
     }
 
     private void initView() {
-        title = (TextView) findViewById(R.id.title);
+
         main = (Button) findViewById(R.id.main);
         one = (Button) findViewById(R.id.one);
         two = (Button) findViewById(R.id.two);
@@ -53,8 +94,6 @@ public class ChooseModeActivity extends Activity {
         four_one = (Button) findViewById(R.id.four_one);
         four_two = (Button) findViewById(R.id.four_two);
         four_three = (Button) findViewById(R.id.four_three);
-
-        title.setText("选择模式");
 
         Handler moveInHandler = new Handler();
         moveInHandler.postDelayed(new Runnable() {
@@ -96,6 +135,23 @@ public class ChooseModeActivity extends Activity {
         //为中间的大按钮绑定监听器
         main.setOnClickListener(new MainClick());
 
+    }
+
+    //重写返回键
+    @Override
+    public void onBackPressed() {
+        leave++;
+        if (leave >= 2) {
+            ActivityCollector.finishAll();
+        } else {
+            Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    leave--;
+                }
+            }, 2000);
+        }
     }
 
     class BigModeClick implements View.OnClickListener {

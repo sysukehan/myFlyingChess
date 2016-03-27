@@ -10,7 +10,7 @@ import android.widget.EditText;
 /**
  * Created by kehan on 16-3-26.
  */
-public class ChangeInformationActivity extends Activity {
+public class ChangeInformationActivity extends FlyingChessActivity {
 
     private Button postButton;//提交按钮
     private EditText newUsername;//新昵称EditText

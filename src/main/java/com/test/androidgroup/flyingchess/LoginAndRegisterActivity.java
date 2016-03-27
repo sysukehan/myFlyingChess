@@ -25,7 +25,7 @@ import java.util.List;
 /**
  * Created by kehan on 16-3-19.
  */
-public class LoginAndRegisterActivity extends Activity {
+public class LoginAndRegisterActivity extends FlyingChessActivity {
 
     private Context context;
 
@@ -82,6 +82,7 @@ public class LoginAndRegisterActivity extends Activity {
 
         //获得匿名登录按钮
         loginAnonymous = (TextView) findViewById(R.id.anonymous_login);
+        //匿名登录
         loginAnonymous.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -157,7 +158,9 @@ public class LoginAndRegisterActivity extends Activity {
                             break;
                         case 2:
                             Toast.makeText(context, "登录成功", Toast.LENGTH_SHORT).show();
+                            //这里存放服务器返回的用户信息
                             RunningInformation.isAnonymous = false;
+
                             Intent intent = new Intent(context, ChooseModeActivity.class);
                             startActivity(intent);
                             break;
@@ -242,6 +245,7 @@ public class LoginAndRegisterActivity extends Activity {
                     //服务器返回两个值，0代表由于id与已注册用户用户相同导致注册失败，1代表注册成功，跳转至模式选择界面
                     int registerReturnSign = -1;
                     /*
+                        将信息上传至服务器与服务器交互
                         访问服务器
                      */
                     switch(registerReturnSign) {
@@ -251,6 +255,8 @@ public class LoginAndRegisterActivity extends Activity {
                             break;
                         case 1:
                             Toast.makeText(context, "注册成功", Toast.LENGTH_SHORT).show();
+
+                            //这里不需要服务器返回信息，直接初始化就可以了
                             RunningInformation.isAnonymous = false;
                             RunningInformation.playerId = userId;
                             RunningInformation.md5Password = MD5.getInstance().getMD5(password);
@@ -261,6 +267,7 @@ public class LoginAndRegisterActivity extends Activity {
                             RunningInformation.exceedWinMatches = 0;
                             RunningInformation.percent = 0;
                             RunningInformation.exceedPercent = 0;
+
                             Intent intent = new Intent(context, ChooseModeActivity.class);
                             startActivity(intent);
                             break;
