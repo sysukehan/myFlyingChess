@@ -44,8 +44,10 @@ public class ChooseModeActivity extends FlyingChessActivity {
         title.setText("选择模式");
         //如果匿名登录，头像不可见；非匿名登录，绑定点击进入个人资料界面的监听器
         if (RunningInformation.isAnonymous) {
-            userImage.setVisibility(View.GONE);
+            userImage.setVisibility(View.INVISIBLE);
+            userImage.setOnClickListener(null);
         } else {
+            userImage.setVisibility(View.VISIBLE);
             userImage.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -64,6 +66,7 @@ public class ChooseModeActivity extends FlyingChessActivity {
                     ActivityCollector.finishAll();
                 } else {
                     Handler handler = new Handler();
+                    Toast.makeText(context, "再按一次退出游戏", Toast.LENGTH_SHORT).show();
                     handler.postDelayed(new Runnable() {
                         @Override
                         public void run() {
@@ -145,6 +148,7 @@ public class ChooseModeActivity extends FlyingChessActivity {
             ActivityCollector.finishAll();
         } else {
             Handler handler = new Handler();
+            Toast.makeText(context, "再按一次退出游戏", Toast.LENGTH_SHORT).show();
             handler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
@@ -173,7 +177,7 @@ public class ChooseModeActivity extends FlyingChessActivity {
                     whichIsShow = 1;
                     animationShow(two_one, 300, 30);
                     animationShow(two_two, 300, 150);
-                    animationShow(two_three, 300, 290);
+                    animationShow(two_three, 300, 270);
                     main.setText(two.getText());
                     break;
                 case R.id.three:

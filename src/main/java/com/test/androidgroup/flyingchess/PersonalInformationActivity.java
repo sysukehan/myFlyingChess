@@ -48,7 +48,7 @@ public class PersonalInformationActivity extends FlyingChessActivity {
         sum = (TextView) findViewById(R.id.sum_matches);
         exceedSum = (TextView) findViewById(R.id.sum_win_players);
         winSum = (TextView) findViewById(R.id.win_matches);
-        exceedWinPercent = (TextView) findViewById(R.id.win_matches_player);
+        exceedWinSum = (TextView) findViewById(R.id.win_matches_player);
         winPercent = (TextView) findViewById(R.id.win_percent);
         exceedWinPercent = (TextView) findViewById(R.id.win_percent_player);
         userId.setText(RunningInformation.playerId);
@@ -56,7 +56,7 @@ public class PersonalInformationActivity extends FlyingChessActivity {
         sum.setText(RunningInformation.sumMatches + "局");
         exceedSum.setText("共超过了" + RunningInformation.exceedSumMatches + "%的玩家");
         winSum.setText(RunningInformation.winMatches + "局");
-        exceedWinPercent.setText("共超过了" + RunningInformation.exceedWinMatches + "%的玩家");
+        exceedWinSum.setText("共超过了" + RunningInformation.exceedWinMatches + "%的玩家");
         winPercent.setText(RunningInformation.percent + "%");
         exceedWinPercent.setText("共超过了" + RunningInformation.exceedPercent + "%的玩家");
 

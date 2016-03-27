@@ -34,6 +34,10 @@
 
         </activity>
 
+        <activity android:name=".ChangeInformationActivity">
+
+        </activity>
+
     </application>
 
 </manifest>

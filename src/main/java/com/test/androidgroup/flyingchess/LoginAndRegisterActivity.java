@@ -69,8 +69,7 @@ public class LoginAndRegisterActivity extends FlyingChessActivity {
         //添加页卡标题
         mTitleList.add("登录");
         mTitleList.add("注册");
-
-
+        
         mTabLayout.setTabMode(TabLayout.MODE_FIXED);//设置tab模式，当前为系统默认模式
         mTabLayout.addTab(mTabLayout.newTab().setText(mTitleList.get(0)));//添加tab选项卡
         mTabLayout.addTab(mTabLayout.newTab().setText(mTitleList.get(1)));
@@ -110,6 +109,7 @@ public class LoginAndRegisterActivity extends FlyingChessActivity {
                     loginUserId.setErrorEnabled(true);
                     loginUserId.setError("id不能为空");//错误信息
                     succeed = false;
+                    return;
                 } else {
                     loginUserId.setErrorEnabled(false);
                     succeed = true;
@@ -121,12 +121,14 @@ public class LoginAndRegisterActivity extends FlyingChessActivity {
                     loginUserId.setErrorEnabled(true);
                     loginUserId.setError("id只能包含字母和数字");//错误信息
                     succeed = false;
+                    return;
                 }
                 //对密码进行判断
                 if (password.equals("")) {
                     loginPassword.setErrorEnabled(true);
                     loginPassword.setError("密码不能为空");//错误信息
                     succeed = false;
+                    return;
                 } else {
                     loginPassword.setErrorEnabled(false);
                     succeed = true;
@@ -137,6 +139,7 @@ public class LoginAndRegisterActivity extends FlyingChessActivity {
                     loginPassword.setErrorEnabled(true);
                     loginPassword.setError("密码只能包含英文或数字");//错误信息
                     succeed = false;
+                    return;
                 } else {
                     loginPassword.setErrorEnabled(false);
                     succeed = true;
@@ -160,6 +163,10 @@ public class LoginAndRegisterActivity extends FlyingChessActivity {
                             Toast.makeText(context, "登录成功", Toast.LENGTH_SHORT).show();
                             //这里存放服务器返回的用户信息
                             RunningInformation.isAnonymous = false;
+
+                            //测试用的
+                            RunningInformation.playerId = userId;
+                            RunningInformation.md5Password = MD5.getInstance().getMD5(password);
 
                             Intent intent = new Intent(context, ChooseModeActivity.class);
                             startActivity(intent);
@@ -197,12 +204,16 @@ public class LoginAndRegisterActivity extends FlyingChessActivity {
                 } else {
                     registerUserId.setErrorEnabled(true);
                     registerUserId.setError("id只能包含数字和字母");//错误信息
+                    succeed = false;
+                    return;
                 }
 
                 //对昵称是否为空进行判断
                 if (username.equals("")) {
                     registerUsername.setErrorEnabled(true);
                     registerUsername.setError("昵称不能为空");//错误信息
+                    succeed = false;
+                    return;
                 } else {
                     registerUsername.setErrorEnabled(false);
                     succeed = true;
@@ -235,6 +246,7 @@ public class LoginAndRegisterActivity extends FlyingChessActivity {
                     registerPasswordAgain.setErrorEnabled(true);
                     registerPasswordAgain.setError("两次密码输入不相同");//错误信息
                     succeed = false;
+                    return;
                 } else {
                     registerPasswordAgain.setErrorEnabled(false);
                     succeed = true;
@@ -256,6 +268,7 @@ public class LoginAndRegisterActivity extends FlyingChessActivity {
                         case 1:
                             Toast.makeText(context, "注册成功", Toast.LENGTH_SHORT).show();
 
+                            /*
                             //这里不需要服务器返回信息，直接初始化就可以了
                             RunningInformation.isAnonymous = false;
                             RunningInformation.playerId = userId;
@@ -267,6 +280,8 @@ public class LoginAndRegisterActivity extends FlyingChessActivity {
                             RunningInformation.exceedWinMatches = 0;
                             RunningInformation.percent = 0;
                             RunningInformation.exceedPercent = 0;
+                            //还是等服务器注册成功再把返回的信息放到RunningInformation中吧，省得两边信息不同步
+                            */
 
                             Intent intent = new Intent(context, ChooseModeActivity.class);
                             startActivity(intent);

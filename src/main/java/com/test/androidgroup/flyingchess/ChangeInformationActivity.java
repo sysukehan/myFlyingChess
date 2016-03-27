@@ -3,10 +3,13 @@ package com.test.androidgroup.flyingchess;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.media.Image;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 /**
@@ -15,6 +18,9 @@ import android.widget.Toast;
 public class ChangeInformationActivity extends FlyingChessActivity {
 
     private Context context;
+    private ImageView back;
+    private TextView title;
+    private ImageView userImage;
     private Button postButton;//提交按钮
     private EditText newUsername;//新昵称EditText
     private EditText oldPassword;//旧密码
@@ -30,6 +36,11 @@ public class ChangeInformationActivity extends FlyingChessActivity {
 
         newUsername.setText(RunningInformation.playerName);
 
+        back = (ImageView) findViewById(R.id.back);
+        title = (TextView) findViewById(R.id.title);
+        userImage = (ImageView) findViewById(R.id.user_image);
+        userImage.setVisibility(View.INVISIBLE);
+        title.setText("修改个人资料");
         postButton = (Button) findViewById(R.id.change_info);
         oldPassword = (EditText) findViewById(R.id.old_password);
         newPassword = (EditText) findViewById(R.id.new_password);
@@ -39,15 +50,22 @@ public class ChangeInformationActivity extends FlyingChessActivity {
             @Override
             public void onClick(View view) {
                 boolean succeed = false;
-                String newPasswordString = oldPassword.getText().toString();
+                String oldPasswordString = oldPassword.getText().toString();
                 //判断旧密码是否正确
-                if (!MD5.getInstance().getMD5(newPasswordString).equals(RunningInformation.md5Password)) {
+                if (!MD5.getInstance().getMD5(oldPasswordString).equals(RunningInformation.md5Password)) {
                     Toast.makeText(context, "原密码不正确", Toast.LENGTH_LONG).show();
                     return;
                 }
+                String newPasswordString = newPassword.getText().toString();
+                //判断新密码是否为空
+                if (newPasswordString.equals("")) {
+                    Toast.makeText(context, "新密码不能为空", Toast.LENGTH_LONG).show();
+                    return;
+                }
+
                 //判断新密码是否只包含数字和字母
                 if (!newPasswordString.matches("^[A-Za-z0-9]+$")) {
-                    Toast.makeText(context, "原密码不正确", Toast.LENGTH_LONG).show();
+                    Toast.makeText(context, "密码只能包含数字和字母", Toast.LENGTH_LONG).show();
                     return;
                 }
                 //判断新密码和二次输入的密码是否相同
@@ -57,11 +75,24 @@ public class ChangeInformationActivity extends FlyingChessActivity {
                     return;
                 }
 
+                /*
+                    与服务器交互更新信息
+                    等服务器确认更新成功再更换RunningInformation中的信息
+                 */
+
                 Intent newIntent = new Intent();
                 newIntent.putExtra("newName", newUsername.getText().toString());
                 setResult(RESULT_OK, newIntent);
                 finish();
             }
         });
+
+        back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onBackPressed();
+            }
+        });
+
     }
 }
