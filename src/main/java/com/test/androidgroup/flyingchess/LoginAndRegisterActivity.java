@@ -3,19 +3,20 @@ package com.test.androidgroup.flyingchess;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.design.widget.TabLayout;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.PagerAdapter;
 
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
+import android.widget.CheckBox;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -47,11 +48,55 @@ public class LoginAndRegisterActivity extends FlyingChessActivity {
     private TextInputLayout registerPassword;//注册密码
     private TextInputLayout registerPasswordAgain;//注册密码确认
 
+    private CheckBox autoLogin;
+    SharedPreferences userInformationShpf;
+    SharedPreferences.Editor editor;
+
+    MessageProcess mp;//处理与服务器的连接，这个句柄要贯穿整个app，因此写在RunningInformation中作为一个静态变量
+    Handler loginHandler;
+    Handler registerHandler;
+    String userID;
+    String password;
+    String username;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login_and_register_layout);
         context = this;
+
+        mp = new MessageProcess();
+        RunningInformation.mp = mp;//给整个app的句柄赋值
+
+
+        //实例化处理Login和处理Register的Handler
+        loginHandler = new LoginHandler();
+        registerHandler = new RegisterHandler();
+
+        //获得记录用户信息的SharedPreferences
+        userInformationShpf = context.getSharedPreferences("user_login_information", 0);
+
+        //如果上次有选自动登录，则直接将信息与服务器交互
+        if (userInformationShpf.getBoolean("isAutoLogin", false)) {
+            String autoID = userInformationShpf.getString("userID", "");
+            String autoPassword = userInformationShpf.getString("password", "");
+            /*
+                与服务器交互获得返回值
+             */
+            boolean sign = false;//用于存放服务器的返回值
+
+            /*
+                存放用户信息到RunningIformation
+             */
+
+            if (!sign) {
+                Toast.makeText(context, "自动登录失败", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(context, "欢迎回来", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(context, ChooseModeActivity.class);
+                startActivity(intent);
+            }
+        }
 
         //获取布局界面中的ViewPager组件和TabLayout组件
         mViewPager = (ViewPager) findViewById(R.id.vp_FindFragment_pager);
@@ -69,7 +114,7 @@ public class LoginAndRegisterActivity extends FlyingChessActivity {
         //添加页卡标题
         mTitleList.add("登录");
         mTitleList.add("注册");
-        
+
         mTabLayout.setTabMode(TabLayout.MODE_FIXED);//设置tab模式，当前为系统默认模式
         mTabLayout.addTab(mTabLayout.newTab().setText(mTitleList.get(0)));//添加tab选项卡
         mTabLayout.addTab(mTabLayout.newTab().setText(mTitleList.get(1)));
@@ -78,6 +123,9 @@ public class LoginAndRegisterActivity extends FlyingChessActivity {
         mViewPager.setAdapter(mAdapter);//给ViewPager设置适配器
         mTabLayout.setupWithViewPager(mViewPager);//将TabLayout和ViewPager关联起来。
         mTabLayout.setTabsFromPagerAdapter(mAdapter);//给Tabs设置适配器
+
+        //对SharedPreferences的编辑器
+        editor = userInformationShpf.edit();
 
         //获得匿名登录按钮
         loginAnonymous = (TextView) findViewById(R.id.anonymous_login);
@@ -91,6 +139,9 @@ public class LoginAndRegisterActivity extends FlyingChessActivity {
             }
         });
 
+        //自动登录复选框
+        autoLogin = (CheckBox) view1.findViewById(R.id.auto_login);
+
         //获得登录按钮，用户名输入框和密码输入框
         loginButton = (Button) view1.findViewById(R.id.login);
         loginUserId = (TextInputLayout) view1.findViewById(R.id.login_userid);
@@ -100,12 +151,16 @@ public class LoginAndRegisterActivity extends FlyingChessActivity {
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                //按钮处于灰色状态时不可点击
+                if (view.getBackground() == getResources().getDrawable(R.drawable.disabled_login_button)) {
+                    return;
+                }
                 //获取输入框字符串
-                String userId = loginUserId.getEditText().getText().toString();
-                String password = loginPassword.getEditText().getText().toString();
+                userID = loginUserId.getEditText().getText().toString();
+                password = loginPassword.getEditText().getText().toString();
                 boolean succeed = true;
                 //对用户名进行判断
-                if (userId.equals("")) {
+                if (userID.equals("")) {
                     loginUserId.setErrorEnabled(true);
                     loginUserId.setError("id不能为空");//错误信息
                     succeed = false;
@@ -114,7 +169,7 @@ public class LoginAndRegisterActivity extends FlyingChessActivity {
                     loginUserId.setErrorEnabled(false);
                     succeed = true;
                 }
-                if (userId.matches("^[A-Za-z0-9]+$")) {
+                if (userID.matches("^[A-Za-z0-9]+$")) {
                     loginUserId.setErrorEnabled(false);
                     succeed = true;
                 } else {
@@ -148,33 +203,22 @@ public class LoginAndRegisterActivity extends FlyingChessActivity {
                 //验证用户名密码的逻辑实现
                 //调用验证函数，返回值有三种，用户名不存在，密码错误，验证成功
                 if (succeed) {
-                    int returnSign = 2;
-                    /*
-                        此处与服务器交互获得返回值
-                    */
-                    switch (returnSign) {
-                        case 0:
-                            Toast.makeText(context, "用户名不存在", Toast.LENGTH_LONG).show();
-                            break;
-                        case 1:
-                            Toast.makeText(context, "密码错误", Toast.LENGTH_LONG).show();
-                            break;
-                        case 2:
-                            Toast.makeText(context, "登录成功", Toast.LENGTH_SHORT).show();
-                            //这里存放服务器返回的用户信息
-                            RunningInformation.isAnonymous = false;
+                    Button button = (Button) view;
+                    button.setBackgroundDrawable(getResources().getDrawable(R.drawable.disabled_login_button));
+                    button.setText("验证中");
+                    //将Handler设置为处理Login的Handler
+                    mp.sendHandler = loginHandler;
 
-                            //测试用的
-                            RunningInformation.playerId = userId;
-                            RunningInformation.md5Password = MD5.getInstance().getMD5(password);
-
-                            Intent intent = new Intent(context, ChooseModeActivity.class);
-                            startActivity(intent);
-                            break;
-                        default:
-                            //服务器未响应的逻辑可能要写在这里
-                            break;
+                    if (mp.ms.sendHandler == null) {
+                        Toast.makeText(context, "无法发送消息，请稍后再试", Toast.LENGTH_LONG).show();
+                        return;
                     }
+
+                    //将登录消息发送至服务器，等待服务器回应
+                    MessageProcessForUI.sendLoginReq(userID, password, mp.ms.sendHandler);
+
+                    //等待回应
+
                 }
             }
         });
@@ -190,15 +234,19 @@ public class LoginAndRegisterActivity extends FlyingChessActivity {
         registerButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                //按钮处于灰色状态时不可点击
+                if (view.getBackground() == getResources().getDrawable(R.drawable.disabled_login_button)) {
+                    return;
+                }
                 //获取输入框字符串
-                String userId = registerUserId.getEditText().getText().toString();
-                String username = registerUsername.getEditText().getText().toString();
-                String password = registerPassword.getEditText().getText().toString();
+                userID = registerUserId.getEditText().getText().toString();
+                username = registerUsername.getEditText().getText().toString();
+                password = registerPassword.getEditText().getText().toString();
                 String passwordagain = registerPasswordAgain.getEditText().getText().toString();
                 boolean succeed = true;
 
                 //对id进行判断
-                if (userId.matches("^[A-Za-z0-9]+$")) {
+                if (userID.matches("^[A-Za-z0-9]+$")) {
                     registerUserId.setErrorEnabled(false);
                     succeed = true;
                 } else {
@@ -254,48 +302,181 @@ public class LoginAndRegisterActivity extends FlyingChessActivity {
 
                 //与服务器交互的逻辑实现
                 if (succeed) {
-                    //服务器返回两个值，0代表由于id与已注册用户用户相同导致注册失败，1代表注册成功，跳转至模式选择界面
-                    int registerReturnSign = -1;
-                    /*
-                        将信息上传至服务器与服务器交互
-                        访问服务器
-                     */
-                    switch(registerReturnSign) {
-                        case 0:
-                            registerUserId.setErrorEnabled(true);
-                            registerUserId.setError("该id已注册，换一个吧");//错误信息
-                            break;
-                        case 1:
-                            Toast.makeText(context, "注册成功", Toast.LENGTH_SHORT).show();
+                    Button button = (Button) view;
+                    button.setBackgroundDrawable(getResources().getDrawable(R.drawable.disabled_login_button));
+                    button.setText("验证中");
+                    //将Handler设置为处理Login的Handler
+                    mp.sendHandler = registerHandler;
 
-                            /*
-                            //这里不需要服务器返回信息，直接初始化就可以了
-                            RunningInformation.isAnonymous = false;
-                            RunningInformation.playerId = userId;
-                            RunningInformation.md5Password = MD5.getInstance().getMD5(password);
-                            RunningInformation.playerName = username;
-                            RunningInformation.sumMatches = 0;
-                            RunningInformation.exceedSumMatches = 0;
-                            RunningInformation.winMatches = 0;
-                            RunningInformation.exceedWinMatches = 0;
-                            RunningInformation.percent = 0;
-                            RunningInformation.exceedPercent = 0;
-                            //还是等服务器注册成功再把返回的信息放到RunningInformation中吧，省得两边信息不同步
-                            */
-
-                            Intent intent = new Intent(context, ChooseModeActivity.class);
-                            startActivity(intent);
-                            break;
-                        default:
-                            //超时的响应可能要放在这里进行
-                            break;
+                    if (mp.ms.sendHandler == null) {
+                        Toast.makeText(context, "无法发送消息，请稍后再试", Toast.LENGTH_LONG).show();
+                        return;
                     }
-                }
 
+                    //将注册消息发送至服务器，等待服务器回应
+                    MessageProcessForUI.sendRegisterReq(userID, password, username, mp.ms.sendHandler);
+
+                    //等待回应
+                }
             }
         });
+
+        mp.start();
+        mp.sendHandler = loginHandler;//这里是不能这样写的
+
     }
 
+    //处理登录的Handler
+    class LoginHandler extends Handler {
+        public void handleMessage(Message msg) {
+
+            loginButton.setBackgroundDrawable(getResources().getDrawable(R.drawable.login_button));
+            loginButton.setText("登录");
+            loginButton.setTextColor(getResources().getColor(R.color.white));
+
+            switch (msg.what) {
+
+                //建立连接成功
+                case 0x123:
+                    try {
+                        MSGS.MSG m = MSGS.MSG.parseFrom((byte[]) msg.obj);   //获取消息类
+
+                        if (m.getResponse().getResult()) {
+
+                            //登录成功
+                            Toast.makeText(context, "登录成功", Toast.LENGTH_SHORT).show();
+
+                            //将信息录入RunningInformation
+                            RunningInformation.isAnonymous = false;
+                            RunningInformation.playerId = userID;//服务器返回的登录信息中不包含ID，ID只能从输入框中获取
+                            RunningInformation.playerName = m.getResponse().getLoginRes().getNickname();//获得昵称
+                            RunningInformation.md5Password = MD5.getInstance().getMD5(password);//从输入框中获取密码并进行MD5加密
+                            RunningInformation.sumMatches = m.getResponse().getLoginRes().getTotalGames();//获取游戏总局数
+                            RunningInformation.exceedSumMatches = m.getResponse().getLoginRes().getTotalGamesRank();//获取游戏总局数超过人数百分比
+                            RunningInformation.winMatches = m.getResponse().getLoginRes().getWinGames();//获取胜利游戏局数
+                            RunningInformation.exceedWinMatches = m.getResponse().getLoginRes().getWinGamesRank();//获取胜利游戏局数超过人数百分比
+                            RunningInformation.percent = (RunningInformation.winMatches + 0.0) / (RunningInformation.sumMatches + 0.0);//胜率本地自己算
+                            RunningInformation.exceedPercent = m.getResponse().getLoginRes().getWinRateRank();//获取胜率超过人数百分比
+
+                            //记录用户名和MD5加密后的密码
+                            editor.putString("userID", RunningInformation.playerId);
+                            editor.putString("password", RunningInformation.md5Password);
+
+                            //如果下次自动登录被选中
+                            if (autoLogin.isChecked()) {
+                                editor.putBoolean("isAutoLogin", true);
+                            } else {
+                                editor.putBoolean("isAutoLogin", false);
+                            }
+
+                            //提交修改
+                            editor.commit();
+
+                            //进入选择模式Activity
+                            Intent intent = new Intent(context, ChooseModeActivity.class);
+                            startActivity(intent);
+
+                        } else {
+                            //登录失败
+                            Toast.makeText(context, "登录失败", Toast.LENGTH_SHORT).show();
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    break;
+
+                //无法建立连接
+                case 0x130:
+                    Toast.makeText(context, "无法建立连接", Toast.LENGTH_LONG).show();
+                    break;
+
+                //失去连接
+                case 0x131:
+                    Toast.makeText(context, "失去连接", Toast.LENGTH_LONG).show();
+                    break;
+
+                default:
+                    Toast.makeText(context, "不知道是什么鬼" + msg.what, Toast.LENGTH_LONG).show();
+                    break;
+            }
+        }
+    }
+
+    //处理注册的Handler
+    class RegisterHandler extends Handler {
+        public void handleMessage(Message msg) {
+
+            registerButton.setBackgroundDrawable(getResources().getDrawable(R.drawable.login_button));
+            registerButton.setText("注册");
+            registerButton.setTextColor(getResources().getColor(R.color.white));
+
+            switch (msg.what) {
+
+                //建立连接成功
+                case 0x123:
+                    try {
+                        MSGS.MSG m = MSGS.MSG.parseFrom((byte[]) msg.obj);   //获取消息类
+
+                        if (m.getResponse().getResult()) {
+
+                            //注册成功
+                            Toast.makeText(context, "注册成功", Toast.LENGTH_SHORT).show();
+
+                            //初始化信息
+                            RunningInformation.isAnonymous = false;
+                            RunningInformation.initial();//初始化信息
+                            RunningInformation.playerId = userID;//ID从输入框中获取
+                            RunningInformation.playerName = username;//昵称
+                            RunningInformation.md5Password = MD5.getInstance().getMD5(password);//从输入框中获取密码并进行MD5加密
+
+                            //记录用户名和MD5加密后的密码
+                            editor.putString("userID", RunningInformation.playerId);
+                            editor.putString("password", RunningInformation.md5Password);
+
+                            //如果下次自动登录被选中
+                            if (autoLogin.isChecked()) {
+                                editor.putBoolean("isAutoLogin", true);
+                            } else {
+                                editor.putBoolean("isAutoLogin", false);
+                            }
+
+                            //提交修改
+                            editor.commit();
+
+                            //进入选择模式Activity
+                            Intent intent = new Intent(context, ChooseModeActivity.class);
+                            startActivity(intent);
+
+                        } else {
+                            //登录失败
+                            Toast.makeText(context, "注册失败", Toast.LENGTH_SHORT).show();
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    break;
+
+                //无法建立连接
+                case 0x130:
+                    Toast.makeText(context, "无法建立连接", Toast.LENGTH_LONG).show();
+                    break;
+
+                //失去连接
+                case 0x131:
+                    Toast.makeText(context, "失去连接", Toast.LENGTH_LONG).show();
+                    break;
+
+                default:
+                    Toast.makeText(context, "不知道是什么鬼" + msg.what, Toast.LENGTH_LONG).show();
+                    break;
+            }
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        ActivityCollector.finishAll();
+    }
 
     //ViewPager适配器
     class MyPagerAdapter extends PagerAdapter {
@@ -332,5 +513,41 @@ public class LoginAndRegisterActivity extends FlyingChessActivity {
         }
 
     }
+/*
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        Log.d("FlyingChess", "LoginAndRegisterActivity onNewIntent()");
+    }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        Log.d("FlyingChess", "LoginAndRegisterActivity onStart()");
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Log.d("FlyingChess", "LoginAndRegisterActivity onResume()");
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        Log.d("FlyingChess", "LoginAndRegisterActivity onPause()");
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        Log.d("FlyingChess", "LoginAndRegisterActivity onStop()");
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        Log.d("FlyingChess", "LoginAndRegisterActivity onDestroy()");
+    }
+*/
 }

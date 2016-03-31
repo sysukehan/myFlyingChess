@@ -25,6 +25,8 @@ dependencies {
     compile 'com.android.support:appcompat-v7:23.2.1'
     compile 'com.android.support:support-v4:23.2.0'
     compile 'com.android.support:design:23.2.0'
+    compile 'com.google.protobuf:protobuf-java:2.6.1'
+    //compile files('libs/protobuf-java-2.6.1.jar')
 }
 
 //另外一个方法就是自己动手支修改build.gradle有参数把compileSdkVersion=19，targetSdkVersion 19，

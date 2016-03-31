@@ -4,7 +4,9 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -14,6 +16,7 @@ import android.widget.TextView;
 
 public class PersonalInformationActivity extends FlyingChessActivity {
 
+    private ImageView back;
     private ImageView image;
     private TextView title;
     private Context context;
@@ -26,6 +29,8 @@ public class PersonalInformationActivity extends FlyingChessActivity {
     private TextView winPercent;//线上对局胜率
     private TextView exceedWinPercent;//线上对局胜率超越人数百分比
 
+    private Button logout;
+
     @Override
     public void onCreate(Bundle savedInstancestate) {
         super.onCreate(savedInstancestate);
@@ -33,7 +38,14 @@ public class PersonalInformationActivity extends FlyingChessActivity {
         context = this;
         image = (ImageView) findViewById(R.id.user_image);
         title = (TextView) findViewById(R.id.title);
+        back = (ImageView) findViewById(R.id.back);
         title.setText("个人资料");
+        back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
         image.setImageResource(R.mipmap.config);
         image.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -60,6 +72,19 @@ public class PersonalInformationActivity extends FlyingChessActivity {
         winPercent.setText(RunningInformation.percent + "%");
         exceedWinPercent.setText("共超过了" + RunningInformation.exceedPercent + "%的玩家");
 
+        logout = (Button) findViewById(R.id.logout);
+        //注销的逻辑在这里实现
+        logout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                /*
+                    注销的时候可能需要跟服务器说一声
+                */
+                //发送广播，退出所有Activity，开启新的LoginAndRegisterActivity
+                Intent newIntent = new Intent("com.test.androidgroup.flyingchess.BACK_TO_LOGIN_REGISTER");
+                sendBroadcast(newIntent);
+            }
+        });
     }
 
     @Override
@@ -74,5 +99,35 @@ public class PersonalInformationActivity extends FlyingChessActivity {
                 break;
         }
     }
+/*
+    @Override
+    public void onStart() {
+        super.onStart();
+        Log.d("FlyingChess", "PersonalInformationActivity onStart()");
+    }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        Log.d("FlyingChess", "PersonalInformationActivity onResume()");
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        Log.d("FlyingChess", "PersonalInformationActivity onPause()");
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        Log.d("FlyingChess", "PersonalInformationActivity onStop()");
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        Log.d("FlyingChess", "PersonalInformationActivity onDestroy()");
+    }
+*/
 }

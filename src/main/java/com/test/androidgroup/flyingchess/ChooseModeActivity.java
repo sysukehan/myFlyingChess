@@ -224,7 +224,9 @@ public class ChooseModeActivity extends FlyingChessActivity {
         @Override
         public void onClick(View view) {
 
-            if (view.getAlpha() <= 0) return;
+            if (view.getVisibility() == View.INVISIBLE || view.getAlpha() < 1) {
+                return;
+            }
 
             Intent intent;
             Bundle data = new Bundle();
@@ -337,7 +339,7 @@ public class ChooseModeActivity extends FlyingChessActivity {
     class MainClick implements View.OnClickListener {
         @Override
         public void onClick(View view) {
-            if (view.getVisibility() == View.INVISIBLE || view.getAlpha() == 0) {
+            if (view.getVisibility() == View.INVISIBLE || view.getAlpha() < 1) {
                 return;
             }
             switch(whichIsShow) {
@@ -379,7 +381,7 @@ public class ChooseModeActivity extends FlyingChessActivity {
             view.setVisibility(View.VISIBLE);
         }
         degree = degree * Math.PI / 180;
-        // 根据三角函数来获得view平移的x,和y
+        // 根据三角函数来获得view平移的x和y
         int translateX = (int) ((int) radius * Math.sin(degree));
         int translateY = (int) ((int) radius * Math.cos(degree));
         AnimatorSet set = new AnimatorSet();
@@ -410,5 +412,35 @@ public class ChooseModeActivity extends FlyingChessActivity {
                 ObjectAnimator.ofFloat(view, "alpha", 1f, 0f));
         set.start();
     }
+/*
+    @Override
+    public void onStart() {
+        super.onStart();
+        Log.d("FlyingChess", "ChooseModeActivity onStart()");
+    }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        Log.d("FlyingChess", "ChooseModeActivity onResume()");
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        Log.d("FlyingChess", "ChooseModeActivity onPause()");
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        Log.d("FlyingChess", "ChooseModeActivity onStop()");
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        Log.d("FlyingChess", "ChooseModeActivity onDestroy()");
+    }
+*/
 }
