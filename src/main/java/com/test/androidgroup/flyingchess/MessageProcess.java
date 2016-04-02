@@ -55,6 +55,7 @@ public class MessageProcess extends Thread{
         }
         catch (IOException e)
         {
+            //Log.d("FlyingChess", e.toString()+ip+Integer.toString(port));
             Message emsg = new Message();
             emsg.what = 0x130;
             emsg.obj = "网络连接超时";
