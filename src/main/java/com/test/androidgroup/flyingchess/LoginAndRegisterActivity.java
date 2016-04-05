@@ -1,6 +1,7 @@
 package com.test.androidgroup.flyingchess;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -12,6 +13,7 @@ import android.support.design.widget.TextInputLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.PagerAdapter;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -58,6 +60,7 @@ public class LoginAndRegisterActivity extends FlyingChessActivity {
     String userID;
     String password;
     String username;
+    ProgressDialog pd;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,6 +69,7 @@ public class LoginAndRegisterActivity extends FlyingChessActivity {
         context = this;
 
         mp = new MessageProcess();
+        mp.flag = true;
         RunningInformation.mp = mp;//给整个app的句柄赋值
 
 
@@ -142,6 +146,13 @@ public class LoginAndRegisterActivity extends FlyingChessActivity {
         //自动登录复选框
         autoLogin = (CheckBox) view1.findViewById(R.id.auto_login);
 
+        //设置验证进度条
+        pd = new ProgressDialog(context);
+        pd.setMessage("验证中...");
+        pd.setCancelable(false);
+        pd.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        pd.setIndeterminate(false);
+
         //获得登录按钮，用户名输入框和密码输入框
         loginButton = (Button) view1.findViewById(R.id.login);
         loginUserId = (TextInputLayout) view1.findViewById(R.id.login_userid);
@@ -151,14 +162,11 @@ public class LoginAndRegisterActivity extends FlyingChessActivity {
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //按钮处于灰色状态时不可点击
-                if (view.getBackground() == getResources().getDrawable(R.drawable.disabled_login_button)) {
-                    return;
-                }
+
                 //获取输入框字符串
                 userID = loginUserId.getEditText().getText().toString();
                 password = loginPassword.getEditText().getText().toString();
-                boolean succeed = true;
+                boolean succeed = false;
                 //对用户名进行判断
                 if (userID.equals("")) {
                     loginUserId.setErrorEnabled(true);
@@ -203,21 +211,22 @@ public class LoginAndRegisterActivity extends FlyingChessActivity {
                 //验证用户名密码的逻辑实现
                 //调用验证函数，返回值有三种，用户名不存在，密码错误，验证成功
                 if (succeed) {
-                    Button button = (Button) view;
-                    button.setBackgroundDrawable(getResources().getDrawable(R.drawable.disabled_login_button));
-                    button.setText("验证中");
+
                     //将Handler设置为处理Login的Handler
                     mp.sendHandler = loginHandler;
+                    Intent newIntent = new Intent(context, ChooseModeActivity.class);
+                    startActivity(newIntent);
+                    try {
+                        //将注册消息发送至服务器，等待服务器回应
+                        MessageProcessForUI.sendLoginReq(userID, password, mp.ms.sendHandler);
 
-                    if (mp.ms.sendHandler == null) {
+                        //显示验证中进度条
+                        pd.show();
+                        //等待回应
+                    } catch (NullPointerException e) {
                         Toast.makeText(context, "无法发送消息，请稍后再试", Toast.LENGTH_LONG).show();
                         return;
                     }
-
-                    //将登录消息发送至服务器，等待服务器回应
-                    MessageProcessForUI.sendLoginReq(userID, password, mp.ms.sendHandler);
-
-                    //等待回应
 
                 }
             }
@@ -234,10 +243,7 @@ public class LoginAndRegisterActivity extends FlyingChessActivity {
         registerButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //按钮处于灰色状态时不可点击
-                if (view.getBackground() == getResources().getDrawable(R.drawable.disabled_login_button)) {
-                    return;
-                }
+
                 //获取输入框字符串
                 userID = registerUserId.getEditText().getText().toString();
                 username = registerUsername.getEditText().getText().toString();
@@ -302,37 +308,40 @@ public class LoginAndRegisterActivity extends FlyingChessActivity {
 
                 //与服务器交互的逻辑实现
                 if (succeed) {
-                    Button button = (Button) view;
-                    button.setBackgroundDrawable(getResources().getDrawable(R.drawable.disabled_login_button));
-                    button.setText("验证中");
+
                     //将Handler设置为处理Login的Handler
                     mp.sendHandler = registerHandler;
 
-                    if (mp.ms.sendHandler == null) {
+                    try {
+
+                        //将注册消息发送至服务器，等待服务器回应
+                        MessageProcessForUI.sendRegisterReq(userID, password, username, mp.ms.sendHandler);
+
+                        //显示验证中进度条
+                        pd.show();
+
+                        //等待回应
+
+                    } catch (NullPointerException e) {
                         Toast.makeText(context, "无法发送消息，请稍后再试", Toast.LENGTH_LONG).show();
                         return;
                     }
-
-                    //将注册消息发送至服务器，等待服务器回应
-                    MessageProcessForUI.sendRegisterReq(userID, password, username, mp.ms.sendHandler);
-
-                    //等待回应
                 }
             }
         });
 
         mp.start();
-        mp.sendHandler = loginHandler;//这里是不能这样写的
+        Handler test = new EmptyHandler();
+        mp.sendHandler = test;//放一个空的Handler应付服务器
 
     }
 
     //处理登录的Handler
-    class LoginHandler extends Handler {
+    private class LoginHandler extends Handler {
         public void handleMessage(Message msg) {
 
-            loginButton.setBackgroundDrawable(getResources().getDrawable(R.drawable.login_button));
-            loginButton.setText("登录");
-            loginButton.setTextColor(getResources().getColor(R.color.white));
+            //收到服务器返回的消息，进度条消失
+            pd.dismiss();
 
             switch (msg.what) {
 
@@ -382,6 +391,7 @@ public class LoginAndRegisterActivity extends FlyingChessActivity {
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
+                        //Log.d("FlyingChess", e.toString());
                     }
                     break;
 
@@ -403,12 +413,11 @@ public class LoginAndRegisterActivity extends FlyingChessActivity {
     }
 
     //处理注册的Handler
-    class RegisterHandler extends Handler {
+    private class RegisterHandler extends Handler {
         public void handleMessage(Message msg) {
 
-            registerButton.setBackgroundDrawable(getResources().getDrawable(R.drawable.login_button));
-            registerButton.setText("注册");
-            registerButton.setTextColor(getResources().getColor(R.color.white));
+            //收到服务器返回的消息，进度条消失
+            pd.dismiss();
 
             switch (msg.what) {
 
@@ -473,6 +482,14 @@ public class LoginAndRegisterActivity extends FlyingChessActivity {
         }
     }
 
+    //一个空的Handler
+    private class EmptyHandler extends Handler {
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+        }
+    }
+
     @Override
     public void onBackPressed() {
         ActivityCollector.finishAll();
@@ -513,41 +530,41 @@ public class LoginAndRegisterActivity extends FlyingChessActivity {
         }
 
     }
-/*
-    @Override
-    protected void onNewIntent(Intent intent) {
-        super.onNewIntent(intent);
-        Log.d("FlyingChess", "LoginAndRegisterActivity onNewIntent()");
-    }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-        Log.d("FlyingChess", "LoginAndRegisterActivity onStart()");
-    }
+//    @Override
+//    protected void onNewIntent(Intent intent) {
+//        super.onNewIntent(intent);
+//        Log.d("FlyingChess", "LoginAndRegisterActivity onNewIntent()");
+//    }
+//
+//    @Override
+//    public void onStart() {
+//        super.onStart();
+//        Log.d("FlyingChess", "LoginAndRegisterActivity onStart()");
+//    }
+//
+//    @Override
+//    public void onResume() {
+//        super.onResume();
+//        Log.d("FlyingChess", "LoginAndRegisterActivity onResume()");
+//    }
+//
+//    @Override
+//    public void onPause() {
+//        super.onPause();
+//        Log.d("FlyingChess", "LoginAndRegisterActivity onPause()");
+//    }
+//
+//    @Override
+//    public void onStop() {
+//        super.onStop();
+//        Log.d("FlyingChess", "LoginAndRegisterActivity onStop()");
+//    }
+//
+//    @Override
+//    public void onDestroy() {
+//        super.onDestroy();
+//        Log.d("FlyingChess", "LoginAndRegisterActivity onDestroy()");
+//    }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        Log.d("FlyingChess", "LoginAndRegisterActivity onResume()");
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        Log.d("FlyingChess", "LoginAndRegisterActivity onPause()");
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        Log.d("FlyingChess", "LoginAndRegisterActivity onStop()");
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        Log.d("FlyingChess", "LoginAndRegisterActivity onDestroy()");
-    }
-*/
 }

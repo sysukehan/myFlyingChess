@@ -52,6 +52,11 @@ public class MessageProcess extends Thread{
             socket.connect(new InetSocketAddress(ip, port), 100000);
             in = socket.getInputStream();
             out = socket.getOutputStream();
+
+            this.ms = new MessageSend(out, this.sendHandler);
+            //mpi = new MessageProcessForUI(ms.sendHandler);
+            ms.start();
+            receiveMessage();
         }
         catch (IOException e)
         {
@@ -62,10 +67,7 @@ public class MessageProcess extends Thread{
             this.sendHandler.sendMessage(emsg);
             e.printStackTrace();
         }
-        this.ms = new MessageSend(out, this.sendHandler);
-        //mpi = new MessageProcessForUI(ms.sendHandler);
-        ms.start();
-        receiveMessage();
+
         Looper.loop();
     }
 
@@ -99,7 +101,7 @@ public class MessageProcess extends Thread{
                     msg.what = 0x123;
                     msg.obj = temp;
                     this.sendHandler.sendMessage(msg);
-                    //Log.d("D---------", "wqe");
+                    //Log.d("FlyingChess", "send" + sendHandler.toString());
                 }
             }
         }

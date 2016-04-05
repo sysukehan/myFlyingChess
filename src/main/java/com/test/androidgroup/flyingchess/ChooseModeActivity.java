@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.media.Image;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -40,6 +41,10 @@ public class ChooseModeActivity extends FlyingChessActivity {
         back = (ImageView) findViewById(R.id.back);
         title = (TextView) findViewById(R.id.title);
         userImage = (ImageView) findViewById(R.id.user_image);
+
+        //更改Handler
+        RunningInformation.mp.sendHandler = new EmptyHandler();
+
         //设置标题文字
         title.setText("选择模式");
         //如果匿名登录，头像不可见；非匿名登录，绑定点击进入个人资料界面的监听器
@@ -158,7 +163,7 @@ public class ChooseModeActivity extends FlyingChessActivity {
         }
     }
 
-    class BigModeClick implements View.OnClickListener {
+    private class BigModeClick implements View.OnClickListener {
         @Override
         public void onClick(View view) {
             switch(view.getId()) {
@@ -220,7 +225,7 @@ public class ChooseModeActivity extends FlyingChessActivity {
     }
 
     //选完小模式之后要传的东西在这里改
-    class SmallModeClick implements View.OnClickListener {
+    private class SmallModeClick implements View.OnClickListener {
         @Override
         public void onClick(View view) {
 
@@ -336,7 +341,7 @@ public class ChooseModeActivity extends FlyingChessActivity {
         }
     }
 
-    class MainClick implements View.OnClickListener {
+    private class MainClick implements View.OnClickListener {
         @Override
         public void onClick(View view) {
             if (view.getVisibility() == View.INVISIBLE || view.getAlpha() < 1) {
@@ -372,6 +377,15 @@ public class ChooseModeActivity extends FlyingChessActivity {
             animationShow(two, 300, 225);
             animationShow(three, 300, 135);
             animationShow(four, 300, 45);
+        }
+    }
+
+
+    //一个空的Handler
+    private class EmptyHandler extends Handler {
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
         }
     }
 
@@ -412,35 +426,35 @@ public class ChooseModeActivity extends FlyingChessActivity {
                 ObjectAnimator.ofFloat(view, "alpha", 1f, 0f));
         set.start();
     }
-/*
-    @Override
-    public void onStart() {
-        super.onStart();
-        Log.d("FlyingChess", "ChooseModeActivity onStart()");
-    }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        Log.d("FlyingChess", "ChooseModeActivity onResume()");
-    }
+//    @Override
+//    public void onStart() {
+//        super.onStart();
+//        Log.d("FlyingChess", "ChooseModeActivity onStart()");
+//    }
+//
+//    @Override
+//    public void onResume() {
+//        super.onResume();
+//        Log.d("FlyingChess", "ChooseModeActivity onResume()");
+//    }
+//
+//    @Override
+//    public void onPause() {
+//        super.onPause();
+//        Log.d("FlyingChess", "ChooseModeActivity onPause()");
+//    }
+//
+//    @Override
+//    public void onStop() {
+//        super.onStop();
+//        Log.d("FlyingChess", "ChooseModeActivity onStop()");
+//    }
+//
+//    @Override
+//    public void onDestroy() {
+//        super.onDestroy();
+//        Log.d("FlyingChess", "ChooseModeActivity onDestroy()");
+//    }
 
-    @Override
-    public void onPause() {
-        super.onPause();
-        Log.d("FlyingChess", "ChooseModeActivity onPause()");
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        Log.d("FlyingChess", "ChooseModeActivity onStop()");
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        Log.d("FlyingChess", "ChooseModeActivity onDestroy()");
-    }
-*/
 }

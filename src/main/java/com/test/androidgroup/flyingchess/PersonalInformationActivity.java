@@ -81,8 +81,11 @@ public class PersonalInformationActivity extends FlyingChessActivity {
                     注销的时候可能需要跟服务器说一声
                 */
                 //发送广播，退出所有Activity，开启新的LoginAndRegisterActivity
-                Intent newIntent = new Intent("com.test.androidgroup.flyingchess.BACK_TO_LOGIN_REGISTER");
-                sendBroadcast(newIntent);
+                //Intent newIntent = new Intent("com.test.androidgroup.flyingchess.BACK_TO_LOGIN_REGISTER");
+                //sendBroadcast(newIntent);
+                Intent newIntent = new Intent(context, LoginAndRegisterActivity.class);
+                newIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(newIntent);
             }
         });
     }
@@ -99,35 +102,35 @@ public class PersonalInformationActivity extends FlyingChessActivity {
                 break;
         }
     }
-/*
-    @Override
-    public void onStart() {
-        super.onStart();
-        Log.d("FlyingChess", "PersonalInformationActivity onStart()");
-    }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        Log.d("FlyingChess", "PersonalInformationActivity onResume()");
-    }
+//    @Override
+//    public void onStart() {
+//        super.onStart();
+//        Log.d("FlyingChess", "PersonalInformationActivity onStart()");
+//    }
+//
+//    @Override
+//    public void onResume() {
+//        super.onResume();
+//        Log.d("FlyingChess", "PersonalInformationActivity onResume()");
+//    }
+//
+//    @Override
+//    public void onPause() {
+//        super.onPause();
+//        Log.d("FlyingChess", "PersonalInformationActivity onPause()");
+//    }
+//
+//    @Override
+//    public void onStop() {
+//        super.onStop();
+//        Log.d("FlyingChess", "PersonalInformationActivity onStop()");
+//    }
+//
+//    @Override
+//    public void onDestroy() {
+//        super.onDestroy();
+//        Log.d("FlyingChess", "PersonalInformationActivity onDestroy()");
+//    }
 
-    @Override
-    public void onPause() {
-        super.onPause();
-        Log.d("FlyingChess", "PersonalInformationActivity onPause()");
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        Log.d("FlyingChess", "PersonalInformationActivity onStop()");
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        Log.d("FlyingChess", "PersonalInformationActivity onDestroy()");
-    }
-*/
 }
