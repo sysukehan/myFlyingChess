@@ -141,8 +141,10 @@ public class MSGTool {
         MSGS.ChessMoveReq.Builder msgL= MSGS.ChessMoveReq.newBuilder();
         msgL.setRoomID(roomID);
         msgL.setUserID(userID);
-        msgL.setColor(color);
-        msgL.setDestination(dest);
+        MSGS.ChessMove.Builder c = MSGS.ChessMove.newBuilder();
+        c.setDestination(dest);
+        c.setColor(color);
+        c.setChessID(chessID);
 
         MSGS.Request.Builder msgQ = MSGS.Request.newBuilder();
         msgQ.setChessMoveReq(msgL);

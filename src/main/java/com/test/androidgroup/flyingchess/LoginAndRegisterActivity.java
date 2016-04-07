@@ -80,28 +80,6 @@ public class LoginAndRegisterActivity extends FlyingChessActivity {
         //获得记录用户信息的SharedPreferences
         userInformationShpf = context.getSharedPreferences("user_login_information", 0);
 
-        //如果上次有选自动登录，则直接将信息与服务器交互
-        if (userInformationShpf.getBoolean("isAutoLogin", false)) {
-            String autoID = userInformationShpf.getString("userID", "");
-            String autoPassword = userInformationShpf.getString("password", "");
-            /*
-                与服务器交互获得返回值
-             */
-            boolean sign = false;//用于存放服务器的返回值
-
-            /*
-                存放用户信息到RunningIformation
-             */
-
-            if (!sign) {
-                Toast.makeText(context, "自动登录失败", Toast.LENGTH_SHORT).show();
-            } else {
-                Toast.makeText(context, "欢迎回来", Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent(context, ChooseModeActivity.class);
-                startActivity(intent);
-            }
-        }
-
         //获取布局界面中的ViewPager组件和TabLayout组件
         mViewPager = (ViewPager) findViewById(R.id.vp_FindFragment_pager);
         mTabLayout = (TabLayout) findViewById(R.id.tab_FindFragment_title);
@@ -214,20 +192,19 @@ public class LoginAndRegisterActivity extends FlyingChessActivity {
 
                     //将Handler设置为处理Login的Handler
                     mp.sendHandler = loginHandler;
-                    Intent newIntent = new Intent(context, ChooseModeActivity.class);
-                    startActivity(newIntent);
+
                     try {
-                        //将注册消息发送至服务器，等待服务器回应
-                        MessageProcessForUI.sendLoginReq(userID, password, mp.ms.sendHandler);
+                        //将登录消息发送至服务器，等待服务器回应
+                        MessageProcessForUI.sendLoginReq(userID, MD5.getInstance().getMD5(password), mp.ms.sendHandler);
 
                         //显示验证中进度条
+                        pd.setMessage("登录中...");
                         pd.show();
                         //等待回应
                     } catch (NullPointerException e) {
                         Toast.makeText(context, "无法发送消息，请稍后再试", Toast.LENGTH_LONG).show();
                         return;
                     }
-
                 }
             }
         });
@@ -315,9 +292,10 @@ public class LoginAndRegisterActivity extends FlyingChessActivity {
                     try {
 
                         //将注册消息发送至服务器，等待服务器回应
-                        MessageProcessForUI.sendRegisterReq(userID, password, username, mp.ms.sendHandler);
+                        MessageProcessForUI.sendRegisterReq(userID, MD5.getInstance().getMD5(password), username, mp.ms.sendHandler);
 
                         //显示验证中进度条
+                        pd.setMessage("注册中...");
                         pd.show();
 
                         //等待回应
@@ -333,6 +311,29 @@ public class LoginAndRegisterActivity extends FlyingChessActivity {
         mp.start();
         Handler test = new EmptyHandler();
         mp.sendHandler = test;//放一个空的Handler应付服务器
+
+        //如果上次有选自动登录，则直接将信息与服务器交互
+        if (userInformationShpf.getBoolean("isAutoLogin", false)) {
+            String autoID = userInformationShpf.getString("userID", "");
+            String autoPassword = userInformationShpf.getString("password", "");
+
+            //将Handler设置为处理Login的Handler
+            mp.sendHandler = loginHandler;
+
+            try {
+                //将登录消息发送至服务器，等待服务器回应
+                MessageProcessForUI.sendLoginReq(autoID, autoPassword, mp.ms.sendHandler);
+
+                //显示验证中进度条
+                pd.setMessage("自动登录中...");
+                pd.show();
+                //等待回应
+
+            } catch (NullPointerException e) {
+                Toast.makeText(context, "无法发送消息，请稍后再试", Toast.LENGTH_LONG).show();
+                return;
+            }
+        }
 
     }
 
@@ -364,7 +365,12 @@ public class LoginAndRegisterActivity extends FlyingChessActivity {
                             RunningInformation.exceedSumMatches = m.getResponse().getLoginRes().getTotalGamesRank();//获取游戏总局数超过人数百分比
                             RunningInformation.winMatches = m.getResponse().getLoginRes().getWinGames();//获取胜利游戏局数
                             RunningInformation.exceedWinMatches = m.getResponse().getLoginRes().getWinGamesRank();//获取胜利游戏局数超过人数百分比
-                            RunningInformation.percent = (RunningInformation.winMatches + 0.0) / (RunningInformation.sumMatches + 0.0);//胜率本地自己算
+                            if (RunningInformation.sumMatches == 0) {
+                                RunningInformation.percent = 0.0;//排除除数为0的情况
+                            } else {
+                                RunningInformation.percent = (RunningInformation.winMatches + 0.0) / (RunningInformation.sumMatches + 0.0);//胜率本地自己算
+                            }
+
                             RunningInformation.exceedPercent = m.getResponse().getLoginRes().getWinRateRank();//获取胜率超过人数百分比
 
                             //记录用户名和MD5加密后的密码
@@ -387,7 +393,13 @@ public class LoginAndRegisterActivity extends FlyingChessActivity {
 
                         } else {
                             //登录失败
-                            Toast.makeText(context, "登录失败", Toast.LENGTH_SHORT).show();
+                            if (m.getResponse().getError() == 3) {
+                                Toast.makeText(context, "id不存在", Toast.LENGTH_LONG).show();
+                            } else if (m.getResponse().getError() == 4) {
+                                Toast.makeText(context, "密码错误", Toast.LENGTH_LONG).show();
+                            } else {
+                                Toast.makeText(context, "失败但不知道什么原因", Toast.LENGTH_LONG).show();
+                            }
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -432,8 +444,8 @@ public class LoginAndRegisterActivity extends FlyingChessActivity {
                             Toast.makeText(context, "注册成功", Toast.LENGTH_SHORT).show();
 
                             //初始化信息
-                            RunningInformation.isAnonymous = false;
                             RunningInformation.initial();//初始化信息
+                            RunningInformation.isAnonymous = false;
                             RunningInformation.playerId = userID;//ID从输入框中获取
                             RunningInformation.playerName = username;//昵称
                             RunningInformation.md5Password = MD5.getInstance().getMD5(password);//从输入框中获取密码并进行MD5加密
@@ -457,8 +469,14 @@ public class LoginAndRegisterActivity extends FlyingChessActivity {
                             startActivity(intent);
 
                         } else {
-                            //登录失败
-                            Toast.makeText(context, "注册失败", Toast.LENGTH_SHORT).show();
+                            //注册失败
+                            if (m.getResponse().getError() == 1) {
+                                Toast.makeText(context, "id已被使用，换一个吧", Toast.LENGTH_LONG).show();
+                            } else if (m.getResponse().getError() == 2) {
+                                Toast.makeText(context, "服务器出了点问题，请稍后再试", Toast.LENGTH_LONG).show();
+                            } else {
+                                Toast.makeText(context, "注册失败但不知道什么原因", Toast.LENGTH_LONG).show();
+                            }
                         }
                     } catch (Exception e) {
                         e.printStackTrace();

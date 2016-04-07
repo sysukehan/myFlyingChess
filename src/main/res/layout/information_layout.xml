@@ -5,6 +5,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/colorPrimaryLight"
     android:orientation="vertical">
 
@@ -20,13 +21,12 @@
             android:layout_height="match_parent"
             android:layout_margin="10dp"
             android:layout_weight="1">
-
-            <ImageView
-                android:id="@+id/info_user_image"
-                android:layout_width="match_parent"
+            <com.test.androidgroup.flyingchess.CircleImageView
                 android:layout_height="match_parent"
-                android:layout_gravity="center"
-                android:src="@mipmap/user" />
+                android:layout_width="match_parent"
+                android:src="@mipmap/user"
+                app:civ_border_width="2dp"
+                app:civ_border_color="@color/white"/>
         </FrameLayout>
 
         <FrameLayout
