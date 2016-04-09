@@ -32,6 +32,8 @@ import java.util.ListIterator;
 import java.util.Objects;
 
 import com.test.androidgroup.flyingchess.AnotherPlayer.Player;
+import com.test.androidgroup.flyingchess.Server.MSGS;
+import com.test.androidgroup.flyingchess.Server.MessageProcessForUI;
 
 /**
  * Created by kehan on 16-3-21.

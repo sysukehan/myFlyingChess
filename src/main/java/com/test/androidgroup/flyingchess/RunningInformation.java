@@ -1,5 +1,7 @@
 package com.test.androidgroup.flyingchess;
 
+import com.test.androidgroup.flyingchess.Server.MessageProcess;
+
 /**
  * Created by kehan on 16-3-27.
  */

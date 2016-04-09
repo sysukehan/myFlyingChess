@@ -14,6 +14,8 @@ import android.widget.TextView;
 
 import java.lang.ref.WeakReference;
 import com.test.androidgroup.flyingchess.AnotherPlayer.Player;
+import com.test.androidgroup.flyingchess.Server.MSGS;
+import com.test.androidgroup.flyingchess.Server.MessageProcessForUI;
 
 public class RoomActivity extends FlyingChessActivity {
     private String previousView;

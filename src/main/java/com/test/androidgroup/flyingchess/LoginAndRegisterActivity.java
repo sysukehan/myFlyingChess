@@ -22,6 +22,10 @@ import android.widget.CheckBox;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.test.androidgroup.flyingchess.Server.MSGS;
+import com.test.androidgroup.flyingchess.Server.MessageProcess;
+import com.test.androidgroup.flyingchess.Server.MessageProcessForUI;
+
 import java.util.ArrayList;
 import java.util.List;
 
