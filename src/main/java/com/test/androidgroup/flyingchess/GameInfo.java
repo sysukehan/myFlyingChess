@@ -1,6 +1,7 @@
 package com.test.androidgroup.flyingchess;
 
 import android.os.Handler;
+import com.test.androidgroup.flyingchess.AnotherPlayer.Player;
 
 /**
  * Created by 伍 on 2016/4/6.

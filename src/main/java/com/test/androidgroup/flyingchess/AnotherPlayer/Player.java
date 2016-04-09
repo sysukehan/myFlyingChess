@@ -1,4 +1,4 @@
-package com.test.androidgroup.flyingchess;
+package com.test.androidgroup.flyingchess.AnotherPlayer;
 
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -6,20 +6,20 @@ import android.os.Parcelable;
 /**
  * Created by 伍 on 2016/4/4.
  */
-class Player implements Parcelable {
-    private String user_id;
-    private String user_Nick_Name;
+public class Player implements Parcelable {
+    public String user_id;
+    public String user_Nick_Name;
     //private userImage;
-    Player() {}
-    Player(String user_id, String user_Nick_Name) {this.user_id = user_id; this.user_Nick_Name = user_Nick_Name;}
-    Player(Parcel in) {
+    public Player() {}
+    public Player(String user_id, String user_Nick_Name) {this.user_id = user_id; this.user_Nick_Name = user_Nick_Name;}
+    public Player(Parcel in) {
         user_id = in.readString();
         user_Nick_Name = in.readString();
     }
-    void setUser_id(String user_id) {this.user_id = user_id;}
-    void setUser_Nick_Name(String user_Nick_Name) {this.user_Nick_Name = user_Nick_Name;}
-    String getUser_id() {return user_id;}
-    String getUser_Nick_Name() {return user_Nick_Name;}
+    public void setUser_id(String user_id) {this.user_id = user_id;}
+    public void setUser_Nick_Name(String user_Nick_Name) {this.user_Nick_Name = user_Nick_Name;}
+    public String getUser_id() {return user_id;}
+    public String getUser_Nick_Name() {return user_Nick_Name;}
     @Override
     public int describeContents() {
         return 0;

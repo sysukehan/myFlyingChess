@@ -3,6 +3,8 @@ package com.test.androidgroup.flyingchess;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.test.androidgroup.flyingchess.AnotherPlayer.Player;
+
 import java.io.Serializable;
 /**
  * Created by 伍 on 2016/4/4.

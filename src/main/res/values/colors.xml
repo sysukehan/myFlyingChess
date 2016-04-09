@@ -26,4 +26,9 @@
     <color name="secondBlack">#8A000000</color>
     <color name="disabledBlack">#61000000</color>
 
+    <color name="f_green">#acce22</color>
+    <color name="f_red">#e9589a</color>
+    <color name="f_blue">#a0d9f6</color>
+    <color name="f_orange">#f39a0f</color>
+
 </resources>

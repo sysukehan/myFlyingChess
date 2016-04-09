@@ -26,5 +26,5 @@
         android:layout_height="30dp"
         android:layout_width="30dp"
         android:layout_margin="10dp"
-        android:src="@mipmap/user"/>
+        android:src="@mipmap/annoymous"/>
 </LinearLayout>

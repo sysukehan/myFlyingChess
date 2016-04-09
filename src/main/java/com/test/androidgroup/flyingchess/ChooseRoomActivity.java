@@ -31,13 +31,17 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Objects;
 
+import com.test.androidgroup.flyingchess.AnotherPlayer.Player;
+
 /**
  * Created by kehan on 16-3-21.
  */
-public class ChooseRoomActivity extends Activity {
+public class ChooseRoomActivity extends FlyingChessActivity {
 
     private TextView title;//标题栏上的字
     private ImageView userImage;//用户头像
+    private ImageView back;//返回键
+
     private ListView Room_List; //房间列表
     private int RoomSize;//房间大小
     private List<HashMap<String, Object>> Room_Data;
@@ -53,6 +57,14 @@ public class ChooseRoomActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.choose_room_layout);
 
+        //初始化返回键，为返回键绑定监听器
+        back = (ImageView) findViewById(R.id.back);
+        back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
 
         GameInfo.mp = RunningInformation.mp;
         GameInfo.setUser(new Player(RunningInformation.playerId, RunningInformation.playerName));

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="chess_red1" type="id"></item>
+    <item name="chess_red2" type="id"></item>
+    <item name="chess_red3" type="id"></item>
+    <item name="chess_red4" type="id"></item>
+    <item name="chess_orange1" type="id"></item>
+    <item name="chess_orange2" type="id"></item>
+    <item name="chess_orange3" type="id"></item>
+    <item name="chess_orange4" type="id"></item>
+    <item name="chess_blue1" type="id"></item>
+    <item name="chess_blue2" type="id"></item>
+    <item name="chess_blue3" type="id"></item>
+    <item name="chess_blue4" type="id"></item>
+    <item name="chess_green1" type="id"></item>
+    <item name="chess_green2" type="id"></item>
+    <item name="chess_green3" type="id"></item>
+    <item name="chess_green4" type="id"></item>
+
+</resources>

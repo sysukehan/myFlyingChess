@@ -37,11 +37,11 @@ public class ChooseModeActivity extends FlyingChessActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.choose_mode_layout);
         context = this;
-        initView();
+
         back = (ImageView) findViewById(R.id.back);
         title = (TextView) findViewById(R.id.title);
         userImage = (ImageView) findViewById(R.id.user_image);
-
+        initView();
         //更改Handler
         RunningInformation.mp.sendHandler = new EmptyHandler();
 
@@ -61,26 +61,6 @@ public class ChooseModeActivity extends FlyingChessActivity {
                 }
             });
         }
-
-        //为自定义返回键绑定监听器
-        back.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                leave++;
-                if (leave >= 2) {
-                    ActivityCollector.finishAll();
-                } else {
-                    Handler handler = new Handler();
-                    Toast.makeText(context, "再按一次退出游戏", Toast.LENGTH_SHORT).show();
-                    handler.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            leave--;
-                        }
-                    }, 2000);
-                }
-            }
-        });
     }
 
     private void initView() {
@@ -118,6 +98,34 @@ public class ChooseModeActivity extends FlyingChessActivity {
         if (RunningInformation.isAnonymous) {
             two.setBackgroundDrawable(getResources().getDrawable(R.drawable.disabled_mode_button));
             two.setTextColor(getResources().getColor(R.color.disabledWhite));
+            //如果为匿名登录，返回到登录注册界面
+            back.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    onBackPressed();
+                }
+            });
+
+        } else {
+            //如果不为匿名登录，则退出游戏
+            back.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    leave++;
+                    if (leave >= 2) {
+                        ActivityCollector.finishAll();
+                    } else {
+                        Handler handler = new Handler();
+                        Toast.makeText(context, "再按一次退出游戏", Toast.LENGTH_SHORT).show();
+                        handler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                leave--;
+                            }
+                        }, 2000);
+                    }
+                }
+            });
         }
 
         //为4个主模式的按钮绑定监听器
@@ -148,18 +156,22 @@ public class ChooseModeActivity extends FlyingChessActivity {
     //重写返回键
     @Override
     public void onBackPressed() {
-        leave++;
-        if (leave >= 2) {
-            ActivityCollector.finishAll();
+        if (RunningInformation.isAnonymous) {
+            super.onBackPressed();
         } else {
-            Handler handler = new Handler();
-            Toast.makeText(context, "再按一次退出游戏", Toast.LENGTH_SHORT).show();
-            handler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    leave--;
-                }
-            }, 2000);
+            leave++;
+            if (leave >= 2) {
+                ActivityCollector.finishAll();
+            } else {
+                Handler handler = new Handler();
+                Toast.makeText(context, "再按一次退出游戏", Toast.LENGTH_SHORT).show();
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        leave--;
+                    }
+                }, 2000);
+            }
         }
     }
 
@@ -247,7 +259,9 @@ public class ChooseModeActivity extends FlyingChessActivity {
                 case R.id.one_one:
                     intent = new Intent(context, GameActivity.class);
                     data.putInt("playerNumber", 2);
+                    data.putInt("mode", 2);
                     intent.putExtras(data);
+                    Log.d("FlyingChess", "1v1被点击了");
                     startActivity(intent);
                     break;
 
@@ -255,7 +269,9 @@ public class ChooseModeActivity extends FlyingChessActivity {
                 case R.id.one_two:
                     intent = new Intent(context, GameActivity.class);
                     data.putInt("playerNumber", 3);
+                    data.putInt("mode", 2);
                     intent.putExtras(data);
+                    Log.d("FlyingChess", "1v2被点击了");
                     startActivity(intent);
                     break;
 
@@ -263,8 +279,9 @@ public class ChooseModeActivity extends FlyingChessActivity {
                 case R.id.one_three:
                     intent = new Intent(context, GameActivity.class);
                     data.putInt("playerNumber", 4);
+                    data.putInt("mode", 2);
                     intent.putExtras(data);
-                    //Log.d("flyingchess", "hehe");
+                    Log.d("FlyingChess", "1v3被点击了");
                     startActivity(intent);
                     break;
 

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+ -->
+<animation-list
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:oneshot="false"
+    >
+    <item android:drawable="@mipmap/dice1" android:duration="50"></item>
+    <item android:drawable="@mipmap/dice2" android:duration="50"></item>
+    <item android:drawable="@mipmap/dice3" android:duration="50"></item>
+    <item android:drawable="@mipmap/dice4" android:duration="50"></item>
+    <item android:drawable="@mipmap/dice5" android:duration="50"></item>
+    <item android:drawable="@mipmap/dice6" android:duration="50"></item>
+</animation-list>
