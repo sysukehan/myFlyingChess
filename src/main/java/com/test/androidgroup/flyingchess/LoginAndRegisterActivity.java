@@ -309,8 +309,7 @@ public class LoginAndRegisterActivity extends FlyingChessActivity {
         });
 
         mp.start();
-        Handler test = new EmptyHandler();
-        mp.sendHandler = test;//放一个空的Handler应付服务器
+        mp.sendHandler = loginHandler;
 
         //如果上次有选自动登录，则直接将信息与服务器交互
         if (userInformationShpf.getBoolean("isAutoLogin", false)) {
@@ -318,7 +317,7 @@ public class LoginAndRegisterActivity extends FlyingChessActivity {
             String autoPassword = userInformationShpf.getString("password", "");
 
             //将Handler设置为处理Login的Handler
-            mp.sendHandler = loginHandler;
+            //mp.sendHandler = loginHandler;
 
             try {
                 //将登录消息发送至服务器，等待服务器回应
@@ -330,9 +329,12 @@ public class LoginAndRegisterActivity extends FlyingChessActivity {
                 //等待回应
 
             } catch (NullPointerException e) {
-                Toast.makeText(context, "无法发送消息，请稍后再试", Toast.LENGTH_LONG).show();
+                Log.d("FlyingChess", e.toString());
+                Toast.makeText(context, "我去，自动登录又失败了", Toast.LENGTH_LONG).show();
                 return;
             }
+        } else {
+            mp.sendHandler = new EmptyHandler();
         }
 
     }

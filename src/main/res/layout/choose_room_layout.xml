@@ -2,12 +2,32 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorPrimaryLight">
+    android:background="@color/colorPrimaryLight"
+    android:orientation="vertical">
 
     <!-- 这个是标题栏，不管它就可以了 -->
     <include layout="@layout/title_layout" />
 
-    <!-- 选房间的布局从这里开始写就可以了 -->
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+        <!-- 选房间的布局从这里开始写就可以了 -->
+        <ListView
+            android:id="@+id/room_list"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="2dp"
+            android:clickable="true"
+            android:divider="#f00"
+            android:dividerHeight="3dp" />
 
-
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/add_room_button"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_margin="15dp"
+            android:layout_gravity="end|bottom"
+            android:src="@mipmap/plus" />
+    </FrameLayout>
 </LinearLayout>

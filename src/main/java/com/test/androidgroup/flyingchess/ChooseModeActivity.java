@@ -166,6 +166,11 @@ public class ChooseModeActivity extends FlyingChessActivity {
     private class BigModeClick implements View.OnClickListener {
         @Override
         public void onClick(View view) {
+
+            if (view.getVisibility() == View.INVISIBLE || view.getAlpha() < 1) {
+                return;
+            }
+
             switch(view.getId()) {
                 case R.id.one:
                     whichIsShow = 0;

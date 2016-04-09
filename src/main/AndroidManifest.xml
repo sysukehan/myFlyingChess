@@ -40,6 +40,10 @@
 
         </activity>
 
+        <activity android:name=".RoomActivity">
+
+        </activity>
+
         <receiver android:name=".BackToLoginAndRegisterReceiver">
             <intent-filter>
                 <action android:name="com.test.androidgroup.flyingchess.BACK_TO_LOGIN_REGISTER" />
