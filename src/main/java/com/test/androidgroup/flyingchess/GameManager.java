@@ -32,14 +32,16 @@ public class GameManager {
 	GameActivity _gameActivity;
 	AIforChess AI = new AIforChess(this);
 	public Handler handler;
-	MessageProcess mp = new MessageProcess();//初始化mp
+	MessageProcess mp;//初始化mp
+	private boolean online = false;
 	
 	private static final String exceptionMsg = "Don't be naughty dumbass";
-	public GameManager(Player player,GameActivity gameActivity) {
+	public GameManager(Player player,GameActivity gameActivity, boolean _online) {
 		_playerList = new ArrayList<Player>();
 		mainPlayer = player;
 		canRoll = false;
 		_gameActivity = gameActivity;
+		online = _online;
 	}
 
 	public ArrayList<Player> getPlayerList(){
@@ -66,99 +68,39 @@ public class GameManager {
 
 		handler = new Handler() {
 			public void handleMessage(Message msg){
-				//Log.i("connect:","收到消息");
-                if(msg.what == 0x006){
-                    _gameActivity.setF_color(currentPlayerIndex%4);
+				Log.i("handleMessage",Integer.toHexString(msg.what));
+                if(msg.what == 0x006){//设置左下角当前玩家棋子
+                    _gameActivity.setF_color(currentPlayerIndex % _playerList.size());
                 }
-                if(msg.what == 0x007){
+                if(msg.what == 0x007){//开始摇骰子动画
                     _gameActivity.startRollDiceAnimation();
                 }
+				if(msg.what == 0x100){//设置准备摇骰子
+					_gameActivity.setRollReady();
+				}
+				if(msg.what == 0x101){//单机模式获得摇骰子结果
+					steps = msg.getData().getInt("rollResult");
+					getStepsAndDeal();
+				}
+				if(msg.what == 0x102){//单机模式开始走棋子
+					getMoveAndDeal(msg.getData().getInt("chessToMove"),msg.getData().getInt("targetCell"));
+				}
 				if (msg.what == 0x123)//是正常的消息
 				{
 					try
 					{
-						//Log.i("connect:","收到正常消息");
 						MSGS.MSG m = MSGS.MSG.parseFrom((byte[])msg.obj);   //获取消息类
-						//Log.i("connect:",m.getMessageType().toString());
 						if(m.getMessageType() == MSGS.MSGType.dicePoint_Notification){//摇骰子结果
 							MSGS.DicePointNtf cr = m.getNotification().getDicePointNtf();
 							dice.rollresult = cr.getPoint();
 							steps = dice.rollresult;
-
-							Log.i("steps", String.valueOf(steps));
-							_gameActivity.setRollResult(steps);
-							//Log.i("PlayerColor", currentPlayer.getColor().toString());
-							if(isMyTurn()) {
-								if (!canMove(mainPlayer) && steps != 6) {
-									endTurn();
-								}
-								else {
-									_gameActivity.canMove = true;
-								}
-							}
-							else{
-								if(currentPlayer.is_Bot){
-									if(!canMove(currentPlayer) && steps != 6) {
-										endTurn();
-									}
-									else {
-										int choiceChessID = AI.WhichToGo(steps, currentPlayer.getColor().ordinal());
-										Chess chessToMove = null;
-										for (Player player : _playerList) {
-											if (chessToMove != null) break;
-											for (Chess chess : player.getChessList()) {
-												if (chess.getId() == choiceChessID) {
-													chessToMove = chess;
-													break;
-												}
-											}
-										}
-										Cell targetCell = null;
-										targetCell = simulateMove(chessToMove);
-										if (targetCell != null) {
-											//Log.i("connect:", "发送ChessMoveReq");
-											MessageProcessForUI.sendChessMoveReq("123456", 1, MSGS.Color.values()[chessToMove.getColor().ordinal()], chessToMove.getId(), targetCell.getIndex(), mp.ms.sendHandler);
-											//move(chess, targetCell);
-										}
-									}
-								}
-							}
+							getStepsAndDeal();
 						}
 
 						if(m.getMessageType() == MSGS.MSGType.chessMove_Notification){//移动骰子
 							MSGS.ChessMoveNtf cr = m.getNotification().getChessMoveNtf();
 
-							Chess chessToMove = null;
-							for(Player player : _playerList){
-								if(chessToMove != null) break;
-								for(Chess chess : player.getChessList()){
-									if(chess.getId() == cr.getChessMove().getChessID()){
-										chessToMove = chess;
-										break;
-									}
-								}
-							}
-							Cell cellToMove = null;
-							for(Cell cell : _gameBoard){
-								if(cellToMove != null) break;
-								if(cell.getIndex() == cr.getChessMove().getDestination()){
-									cellToMove = cell;
-									break;
-								}
-							}
-
-							move(chessToMove, cellToMove);
-							Thread wait2sAndEndTurn = new Thread(new Runnable() {
-								public void run(){
-									try{
-										Thread.sleep(2000);
-										endTurn();
-
-									}
-									catch (Exception e){}
-								}
-							});
-							wait2sAndEndTurn.start();
+							getMoveAndDeal(cr.getChessMove().getChessID(),cr.getChessMove().getDestination());
 						}
 					}
 					catch (Exception e){Log.i("connectError:",e.toString());}
@@ -175,16 +117,20 @@ public class GameManager {
 				}
 			}
 		};
-		mp.flag=true;
-		mp.start();//开启监听来自服务器消息的线程，而ms随后也会自动被建立。
+		mp = RunningInformation.mp;
 		mp.sendHandler = handler;
-
+		mp.ms.sendHandler = handler;
+		/*
+		if(online) {
+			mp.start();//开启监听来自服务器消息的线程，而ms随后也会自动被建立。
+		}
+		*/
 		// set current player
 		//currentPlayerIndex = dice.roll() % _playerList.size();//
 		currentPlayerIndex = 0;//测试，从当前用户开始
 		currentPlayer = _playerList.get(currentPlayerIndex);
 		canRoll = isMyTurn();
-        endTurn();
+        startNewTurn();
 		
 		// load map
 		_gameBoard = new ArrayList<Cell>();
@@ -223,11 +169,6 @@ public class GameManager {
 						Integer.parseInt(s[6]) == 1,
 						Integer.parseInt(s[7]) == 1,
 						Integer.parseInt(s[8]) == 1);
-
-					//Log.i("ID", String.valueOf(_gameBoard.get(Integer.parseInt(s[0])).getIndex()));
-					//Log.i("NEXT:", String.valueOf(_gameBoard.get(Integer.parseInt(s[0])).getNextCell().getIndex()));
-
-				//Log.i("Color", s[1]);
 			}
 			in.close();
 		} catch (Exception e){
@@ -246,6 +187,86 @@ public class GameManager {
 		for (Player player : _playerList) {
 			for (Chess chess : player.getChessList()) {
 				sendToHome(chess);
+			}
+		}
+	}
+
+	private void getMoveAndDeal(int chessId, int cellId){
+		Chess chessToMove = null;
+		for(Player player : _playerList){
+			if(chessToMove != null) break;
+			for(Chess chess : player.getChessList()){
+				if(chess.getId() == chessId){
+					chessToMove = chess;
+					break;
+				}
+			}
+		}
+		Cell cellToMove = null;
+		for(Cell cell : _gameBoard){
+			if(cellToMove != null) break;
+			if(cell.getIndex() == cellId){
+				cellToMove = cell;
+				break;
+			}
+		}
+
+		move(chessToMove, cellToMove);
+		Thread wait2sAndEndTurn = new Thread(new Runnable() {
+			public void run(){
+				try{
+					Thread.sleep(2000);
+					endTurn();
+
+				}
+				catch (Exception e){}
+			}
+		});
+		wait2sAndEndTurn.start();
+	}
+
+	private void getStepsAndDeal() {
+		Log.i("steps", String.valueOf(steps));
+		_gameActivity.setRollResult(steps);
+		if (isMyTurn()) {
+			if (!canMove(mainPlayer) && steps != 6) {
+				endTurn();
+			} else {
+				_gameActivity.canMove = true;
+			}
+		} else {
+			if (currentPlayer.is_Bot) {
+				if (!canMove(currentPlayer) && steps != 6) {
+					endTurn();
+				} else {
+					int choiceChessID = AI.WhichToGo(steps, currentPlayer.getColor().ordinal());
+					Chess chessToMove = null;
+					for (Player player : _playerList) {
+						if (chessToMove != null) break;
+						for (Chess chess : player.getChessList()) {
+							if (chess.getId() == choiceChessID) {
+								chessToMove = chess;
+								break;
+							}
+						}
+					}
+					Cell targetCell = null;
+					targetCell = simulateMove(chessToMove);
+					if (targetCell != null) {
+						if(online) {
+							MessageProcessForUI.sendChessMoveReq("123456", 1, MSGS.Color.values()[chessToMove.getColor().ordinal()], chessToMove.getId(), targetCell.getIndex(), mp.ms.sendHandler);
+						}
+						else{
+							Message msg = new Message();
+							msg.what = 0x102;
+							Bundle bundle = new Bundle();
+							bundle.putInt("chessToMove",chessToMove.getId());
+							bundle.putInt("targetCell",targetCell.getIndex());
+							msg.setData(bundle);
+							handler.sendMessage(msg);
+						}
+					}
+				}
 			}
 		}
 	}
@@ -292,6 +313,7 @@ public class GameManager {
         canRoll = isMyTurn();
         _gameActivity.canMove = false;
         handler.sendEmptyMessage(0x006);
+        handler.sendEmptyMessage(0x100);
 
         Log.i("PlayerColor", currentPlayer.getColor().toString());
         if (currentPlayer.is_Bot) {
@@ -302,7 +324,12 @@ public class GameManager {
 
 	private void SendRollIfRoomMaster(){
 		//if(mainPlayer.isRoomMaster){
+		if(online) {
 			dice.roll(mp.ms.sendHandler);
+		}
+		else{
+			dice.rollOffline(handler);
+		}
 		//}
 
 
@@ -319,8 +346,18 @@ public class GameManager {
 					}
 					targetCell = simulateMove(chess);
 					if(targetCell != null) {
-						MessageProcessForUI.sendChessMoveReq("123456", 1, MSGS.Color.values()[chess.getColor().ordinal()], chess.getId(), targetCell.getIndex(), mp.ms.sendHandler);
-						//move(chess, targetCell);
+						if(online) {
+							MessageProcessForUI.sendChessMoveReq("123456", 1, MSGS.Color.values()[chess.getColor().ordinal()], chess.getId(), targetCell.getIndex(), mp.ms.sendHandler);
+						}
+						else{
+							Message msg = new Message();
+							msg.what = 0x102;
+							Bundle bundle = new Bundle();
+							bundle.putInt("chessToMove",chess.getId());
+							bundle.putInt("targetCell",targetCell.getIndex());
+							msg.setData(bundle);
+							handler.sendMessage(msg);
+						}
 					}
 					else{
 						return 0;
@@ -446,7 +483,12 @@ public class GameManager {
 	
 	public int rollDice() {
 		if (canRoll) {
-			dice.roll(mp.ms.sendHandler);
+			if(online){
+				dice.roll(mp.ms.sendHandler);
+			}
+			else{
+				dice.rollOffline(handler);
+			}
 			canRoll = false;
 			return 0;
 		}

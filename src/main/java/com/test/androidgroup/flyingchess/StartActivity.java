@@ -25,6 +25,6 @@ public class StartActivity extends FlyingChessActivity {
                 startActivity(intent);
                 finish();
             }
-        }, 2000);
+        }, 4000);
     }
 }

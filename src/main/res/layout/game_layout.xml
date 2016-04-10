@@ -6,6 +6,9 @@
     android:id="@+id/game_layout">
 
     <!-- 这个是标题栏，不管它就可以了 -->
+
+
+
     <include layout="@layout/title_layout" />
 
     <!-- 这个是留着放地图用的，如果用不上的话删掉就好了，其它布局从下面开始写起 -->
@@ -16,45 +19,46 @@
         android:gravity="center">
 
         <ImageView
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/iv_board"
-            android:src="@mipmap/board"
-            />
+            android:background="@mipmap/board" />
 
     </RelativeLayout>
 
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="horizontal"
         android:id="@+id/game_information"
         android:background="@color/colorPrimaryLight">
 
-
         <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@mipmap/f_blue"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:background="@mipmap/f_blue"
             android:id="@+id/f_color"
-            android:layout_margin="10dp" />
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="20dp" />
         <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
             android:id="@+id/dice"
             android:src="@drawable/loopdice"
-            android:layout_marginTop="5dp"
-            android:layout_marginBottom="5dp"
-            android:layout_marginRight="40dp"
-            android:layout_marginLeft="40dp" />
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            />
         <ImageButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
             android:background= "@mipmap/sound_btn"
             android:id="@+id/sound_btn"
-            android:layout_margin="10dp" />
-    </LinearLayout>
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="20dp" />
+    </RelativeLayout>
 
 
 </LinearLayout>

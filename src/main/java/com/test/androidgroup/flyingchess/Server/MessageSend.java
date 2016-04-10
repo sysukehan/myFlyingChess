@@ -51,9 +51,11 @@ public class MessageSend extends Thread{
         {
             out.write((byte[])message.obj);
         }
-        catch (IOException e)
+        catch (Exception e)
         {
-
+            Message msg = new Message();
+            msg.what = 0x130;
+            mainHandler.sendMessage(msg);
         }
     }
 }

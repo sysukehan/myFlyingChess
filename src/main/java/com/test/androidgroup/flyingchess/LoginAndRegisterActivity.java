@@ -196,6 +196,7 @@ public class LoginAndRegisterActivity extends FlyingChessActivity {
 
                     //将Handler设置为处理Login的Handler
                     mp.sendHandler = loginHandler;
+                    mp.ms.mainHandler = loginHandler;
 
                     try {
                         //将登录消息发送至服务器，等待服务器回应
@@ -292,6 +293,7 @@ public class LoginAndRegisterActivity extends FlyingChessActivity {
 
                     //将Handler设置为处理Login的Handler
                     mp.sendHandler = registerHandler;
+                    mp.ms.mainHandler = registerHandler;
 
                     try {
 
@@ -323,10 +325,13 @@ public class LoginAndRegisterActivity extends FlyingChessActivity {
             //将Handler设置为处理Login的Handler
             //mp.sendHandler = loginHandler;
 
+            Log.d("FlyingChess", autoID + " " + autoPassword);
             try {
+                Log.d("FlyingChess", autoID + " " + autoPassword);
+                Log.d("FlyingChess", "到这里了");
                 //将登录消息发送至服务器，等待服务器回应
                 MessageProcessForUI.sendLoginReq(autoID, autoPassword, mp.ms.sendHandler);
-
+                //Log.d("FlyingChess", "到这里了");
                 //显示验证中进度条
                 pd.setMessage("自动登录中...");
                 pd.show();

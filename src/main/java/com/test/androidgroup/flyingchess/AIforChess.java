@@ -76,7 +76,7 @@ public class AIforChess
 			board[i] = -1;
 
         int m = 0;
-        for (com.test.androidgroup.flyingchess.Resource.Player player : _gameManager.getPlayerList()) {
+        for (Player player : _gameManager.getPlayerList()) {
             for (Chess chess : player.getChessList()) {
                 pos[m] = chess.getCell().getIndex();
                 if (pos[m] < 52)
