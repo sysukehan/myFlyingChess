@@ -139,7 +139,7 @@ public class LoginAndRegisterActivity extends FlyingChessActivity {
         loginButton = (Button) view1.findViewById(R.id.login);
         loginUserId = (TextInputLayout) view1.findViewById(R.id.login_userid);
         loginPassword = (TextInputLayout) view1.findViewById(R.id.login_password);
-
+        int fuck;
         //登录逻辑实现
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -316,6 +316,7 @@ public class LoginAndRegisterActivity extends FlyingChessActivity {
 
         mp.start();
         mp.sendHandler = loginHandler;
+        mp.ms.sendHandler = loginHandler;
 
         //如果上次有选自动登录，则直接将信息与服务器交互
         if (userInformationShpf.getBoolean("isAutoLogin", false)) {
@@ -323,7 +324,8 @@ public class LoginAndRegisterActivity extends FlyingChessActivity {
             String autoPassword = userInformationShpf.getString("password", "");
 
             //将Handler设置为处理Login的Handler
-            //mp.sendHandler = loginHandler;
+            mp.sendHandler = loginHandler;
+            mp.ms.sendHandler = loginHandler;
 
             Log.d("FlyingChess", autoID + " " + autoPassword);
             try {
@@ -331,7 +333,7 @@ public class LoginAndRegisterActivity extends FlyingChessActivity {
                 Log.d("FlyingChess", "到这里了");
                 //将登录消息发送至服务器，等待服务器回应
                 MessageProcessForUI.sendLoginReq(autoID, autoPassword, mp.ms.sendHandler);
-                //Log.d("FlyingChess", "到这里了");
+                Log.d("FlyingChess", "又到这里了");
                 //显示验证中进度条
                 pd.setMessage("自动登录中...");
                 pd.show();
@@ -560,40 +562,40 @@ public class LoginAndRegisterActivity extends FlyingChessActivity {
 
     }
 
-//    @Override
-//    protected void onNewIntent(Intent intent) {
-//        super.onNewIntent(intent);
-//        Log.d("FlyingChess", "LoginAndRegisterActivity onNewIntent()");
-//    }
-//
-//    @Override
-//    public void onStart() {
-//        super.onStart();
-//        Log.d("FlyingChess", "LoginAndRegisterActivity onStart()");
-//    }
-//
-//    @Override
-//    public void onResume() {
-//        super.onResume();
-//        Log.d("FlyingChess", "LoginAndRegisterActivity onResume()");
-//    }
-//
-//    @Override
-//    public void onPause() {
-//        super.onPause();
-//        Log.d("FlyingChess", "LoginAndRegisterActivity onPause()");
-//    }
-//
-//    @Override
-//    public void onStop() {
-//        super.onStop();
-//        Log.d("FlyingChess", "LoginAndRegisterActivity onStop()");
-//    }
-//
-//    @Override
-//    public void onDestroy() {
-//        super.onDestroy();
-//        Log.d("FlyingChess", "LoginAndRegisterActivity onDestroy()");
-//    }
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        Log.d("FlyingChess", "LoginAndRegisterActivity onNewIntent()");
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        Log.d("FlyingChess", "LoginAndRegisterActivity onStart()");
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Log.d("FlyingChess", "LoginAndRegisterActivity onResume()");
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        Log.d("FlyingChess", "LoginAndRegisterActivity onPause()");
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        Log.d("FlyingChess", "LoginAndRegisterActivity onStop()");
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        Log.d("FlyingChess", "LoginAndRegisterActivity onDestroy()");
+    }
 
 }

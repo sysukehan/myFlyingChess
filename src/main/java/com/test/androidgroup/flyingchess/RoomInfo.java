@@ -14,7 +14,7 @@ public class RoomInfo implements Parcelable {
     private String Host;
     private int PlayerNumber;
     private int RoomSize;
-    public Player [] players = new Player[4];
+    public Player[] players = new Player[4];
 
     RoomInfo() {}
     RoomInfo(int roomID, String host,int playerNumber,int roomSize, Player player[]) {
@@ -30,6 +30,21 @@ public class RoomInfo implements Parcelable {
         this.PlayerNumber = in.readInt();
         this.RoomSize = in.readInt();
         for (int i = 0; i < PlayerNumber; i++) players[i] = (Player) in.readValue(Player.class.getClassLoader());
+    }
+
+    void addPlayer(Player player) {
+        players[PlayerNumber] = player;
+        PlayerNumber++;
+    }
+
+    void removePlayer(Player player) {
+        int i = 0;
+        while(player != players[i]) i++;
+        for(; i < PlayerNumber; i++) {
+            players[i] = players[i+1];
+        }
+        players[PlayerNumber-1] = null;
+        PlayerNumber--;
     }
 
     void setRoomID(int roomID) { RoomID = roomID; }

@@ -421,6 +421,10 @@ public class ChooseModeActivity extends FlyingChessActivity {
         int translateX = (int) ((int) radius * Math.sin(degree));
         int translateY = (int) ((int) radius * Math.cos(degree));
         AnimatorSet set = new AnimatorSet();
+
+        //先使view可见，再进行动画部分
+        view.setVisibility(View.VISIBLE);
+
         set.playTogether(
                 ObjectAnimator.ofFloat(view, "translationX", 0, translateX),
                 ObjectAnimator.ofFloat(view, "translationY", 0, translateY),
@@ -447,6 +451,16 @@ public class ChooseModeActivity extends FlyingChessActivity {
                 ObjectAnimator.ofFloat(view, "scaleY", 1f, 0f),
                 ObjectAnimator.ofFloat(view, "alpha", 1f, 0f));
         set.start();
+
+        //执行动画之后，使view不可见
+        final View tempView = view;
+        Handler showHandler = new Handler();
+        showHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                tempView.setVisibility(View.GONE);
+            }
+        }, 100);
     }
 
 //    @Override

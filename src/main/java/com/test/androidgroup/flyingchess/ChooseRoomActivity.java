@@ -1,7 +1,6 @@
 package com.test.androidgroup.flyingchess;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -21,6 +20,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -150,11 +150,11 @@ public class ChooseRoomActivity extends FlyingChessActivity {
                                 MSGS.CreateRoomRes create = m.getResponse().getCreateRoomRes();
                                 if (m.getResponse().getResult()) {
                                     activity.room_enter.setRoomID(create.getRoomID()); //得到请求建立的房间的ID
-                                    activity.room_enter.setHost(GameInfo.getUser().getUser_id());
+                                    activity.room_enter.setHost(GameInfo.getUser().getUser_Nick_Name());
                                     activity.room_enter.setPlayerNumber(1);
                                     activity.room_enter.players[0] = GameInfo.getUser();
                                 }
-                                else new AlertDialog.Builder(activity).setTitle("创建房间失败").setPositiveButton("OK", null).create().show();
+                                else Toast.makeText(activity.getApplicationContext(),"创建房间失败",Toast.LENGTH_SHORT).show();
                             }
                             if (m.getMessageType() == MSGS.MSGType.enterRoom_Response) {
                                 MSGS.EnterRoomRes enter = m.getResponse().getEnterRoomRes();
@@ -166,7 +166,9 @@ public class ChooseRoomActivity extends FlyingChessActivity {
                                         activity.room_enter.players[j] = new Player(enter.getRoomInfo().getPlayers(j).getUserID(), enter.getRoomInfo().getPlayers(j).getNickname());
                                     }
                                 } else
-                                    new AlertDialog.Builder(activity).setTitle("请求进入房间失败，可能该房间人数已满").setPositiveButton("OK", null).create().show();
+                                {
+                                   Toast.makeText(activity.getApplicationContext(),"请求进入房间失败",Toast.LENGTH_SHORT).show();
+                                }
                             }
                             if(m.getResponse().getResult()) {
                                 Intent intent = new Intent(activity, RoomActivity.class);
@@ -182,11 +184,11 @@ public class ChooseRoomActivity extends FlyingChessActivity {
                 }
                 if (msg.what == 0x130)//无法建立连接
                 {
-                    new AlertDialog.Builder(activity).setTitle("建立连接失败").setPositiveButton("OK", null).create().show();
+                    Toast.makeText(activity.getApplicationContext(), "建立连接失败", Toast.LENGTH_LONG).show();
                 }
                 if (msg.what == 0x131)//连接断开
                 {
-                    new AlertDialog.Builder(activity).setTitle("失去连接").setPositiveButton("OK", null).create().show();
+                    Toast.makeText(activity.getApplicationContext(), "失去连接", Toast.LENGTH_LONG).show();
                 }
             }
         }

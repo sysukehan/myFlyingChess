@@ -1,6 +1,5 @@
 package com.test.androidgroup.flyingchess;
 
-import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
@@ -11,6 +10,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.lang.ref.WeakReference;
 import com.test.androidgroup.flyingchess.AnotherPlayer.Player;
@@ -34,8 +34,7 @@ public class RoomActivity extends FlyingChessActivity {
         SetView(room.getPlayerNumber());
         Button exitRoom = (Button) findViewById(R.id.exit_room);
         Button startGame = (Button) findViewById(R.id.start_game);
-        if (GameInfo.getUser().getUser_id().equals(room.getHost())) startGame.setVisibility(View.VISIBLE);
-        Log.v("Host",room.getHost());
+        if (GameInfo.getUser().getUser_Nick_Name().equals(room.getHost())) startGame.setVisibility(View.VISIBLE);
         exitRoom.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -63,7 +62,7 @@ public class RoomActivity extends FlyingChessActivity {
             //玩家一
             LinearLayout player1 = (LinearLayout) findViewById(R.id.player_item1);
             TextView player1_info = (TextView) player1.findViewById(R.id.player_id);
-            player1_info.setText(room.players[0].getUser_id());
+            player1_info.setText(room.players[0].getUser_Nick_Name());
 
             //玩家二
             LinearLayout player2 = (LinearLayout) findViewById(R.id.player_item2);
@@ -78,16 +77,16 @@ public class RoomActivity extends FlyingChessActivity {
 
             if(player_num >= 2) {
                 size2.setVisibility(View.VISIBLE);
-                player2_info.setText(room.players[1].getUser_id());
+                player2_info.setText(room.players[1].getUser_Nick_Name());
             }
             if(player_num >= 3) {
                 size3.setVisibility(View.VISIBLE);
-                player3_info.setText(room.players[2].getUser_id());
+                player3_info.setText(room.players[2].getUser_Nick_Name());
             }
 
             if(player_num == 4) {
                 size4.setVisibility(View.VISIBLE);
-                player4_info.setText(room.players[3].getUser_id());
+                player4_info.setText(room.players[3].getUser_Nick_Name());
             }
     }
 
@@ -128,20 +127,26 @@ public class RoomActivity extends FlyingChessActivity {
 //                                intent.putExtras(data);
                                 activity.startActivity(intent);
                             }
-                            else new AlertDialog.Builder(activity).setTitle("开始游戏失败").setPositiveButton("OK", null).create().show();
+                            else Toast.makeText(activity.getApplicationContext(),"Oops,开始游戏失败",Toast.LENGTH_LONG).show();
                         }
 
                         if(m.getMessageType() == MSGS.MSGType.roomChange_Notification) {
                             MSGS.RoomChangeNtf change = m.getNotification().getRoomChangeNtf();
+                            Log.d("room enter", Boolean.toString(change.getInout()));
                             if(change.getInout() == true) { //进入房间通知
-                                activity.room.players[activity.room.getPlayerNumber()] = new Player(change.getPlayer(0).getUserID(),change.getPlayer(0).getNickname());
-                                activity.room.setPlayerNumber(activity.room.getPlayerNumber()+change.getPlayerCount());
+                                Log.d("room enter", change.getPlayer(0).getNickname()+"进入了房间");
+                                Toast.makeText(activity.getApplicationContext(),change.getPlayer(0).getNickname()+"进入了房间",Toast.LENGTH_LONG).show();
+                                activity.room.addPlayer(new Player(change.getPlayer(0).getUserID(), change.getPlayer(0).getNickname()));
+                                activity.SetView(activity.room.getPlayerNumber());
                             }
                             else{ //退出房间通知
-
+                                Toast.makeText(activity.getApplicationContext(),change.getPlayer(0).getNickname()+"退出了房间",Toast.LENGTH_LONG).show();
+                                activity.room.removePlayer(new Player(change.getPlayer(0).getUserID(),change.getPlayer(0).getNickname()));
+                                activity.SetView(activity.room.getPlayerNumber());
                             }
                         }
                         if(m.getMessageType() == MSGS.MSGType.beginGame_Notification) {
+                            Toast.makeText(activity.getApplicationContext(), "准备开始游戏。。。", Toast.LENGTH_LONG).show();
                             MSGS.BeginGameNtf begin = m.getNotification().getBeginGameNtf();
                             Intent intent = new Intent(activity.context,GameActivity.class);
 //                                Bundle data = new Bundle();
@@ -150,15 +155,15 @@ public class RoomActivity extends FlyingChessActivity {
                             activity.startActivity(intent);
                         }
                     }
-                    catch (Exception e){}
+                    catch (Exception e){Log.d("parse", "Oops,GG");}
                 }
                 if (msg.what == 0x130)//无法建立连接
                 {
-                    new AlertDialog.Builder(activity).setTitle("建立连接失败").setPositiveButton("OK", null).create().show();
+                    Toast.makeText(activity.getApplicationContext(), "建立连接失败", Toast.LENGTH_LONG).show();
                 }
                 if (msg.what == 0x131)//连接断开
                 {
-                    new AlertDialog.Builder(activity).setTitle("失去连接").setPositiveButton("OK", null).create().show();
+                    Toast.makeText(activity.getApplicationContext(), "失去连接", Toast.LENGTH_LONG).show();
                 }
             }
         }
