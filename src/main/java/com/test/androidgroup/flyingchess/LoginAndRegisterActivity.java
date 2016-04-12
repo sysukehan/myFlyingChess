@@ -195,8 +195,13 @@ public class LoginAndRegisterActivity extends FlyingChessActivity {
                 if (succeed) {
 
                     //将Handler设置为处理Login的Handler
-                    mp.sendHandler = loginHandler;
-                    mp.ms.mainHandler = loginHandler;
+                    try {
+                        mp.sendHandler = loginHandler;
+                        mp.ms.mainHandler = loginHandler;
+                    }
+                    catch (Exception e) {
+                        Toast.makeText(context, "无法建立连接", Toast.LENGTH_LONG).show();
+                    }
 
                     try {
                         //将登录消息发送至服务器，等待服务器回应
@@ -292,8 +297,13 @@ public class LoginAndRegisterActivity extends FlyingChessActivity {
                 if (succeed) {
 
                     //将Handler设置为处理Login的Handler
-                    mp.sendHandler = registerHandler;
-                    mp.ms.mainHandler = registerHandler;
+                    try {
+                        mp.sendHandler = registerHandler;
+                        mp.ms.mainHandler = registerHandler;
+                    }
+                    catch (Exception e) {
+                        Toast.makeText(context, "无法建立连接", Toast.LENGTH_LONG).show();
+                    }
 
                     try {
 
@@ -314,9 +324,14 @@ public class LoginAndRegisterActivity extends FlyingChessActivity {
             }
         });
 
-        mp.start();
-        mp.sendHandler = loginHandler;
-        mp.ms.sendHandler = loginHandler;
+        try {
+            mp.start();
+            mp.sendHandler = loginHandler;
+            mp.ms.mainHandler = loginHandler;
+        }
+        catch (Exception e) {
+            Toast.makeText(context, "无法建立连接", Toast.LENGTH_LONG).show();
+        }
 
         //如果上次有选自动登录，则直接将信息与服务器交互
         if (userInformationShpf.getBoolean("isAutoLogin", false)) {
@@ -324,8 +339,14 @@ public class LoginAndRegisterActivity extends FlyingChessActivity {
             String autoPassword = userInformationShpf.getString("password", "");
 
             //将Handler设置为处理Login的Handler
-            mp.sendHandler = loginHandler;
-            mp.ms.sendHandler = loginHandler;
+            try {
+                mp.start();
+                mp.sendHandler = loginHandler;
+                mp.ms.mainHandler = loginHandler;
+            }
+            catch (Exception e) {
+                Toast.makeText(context, "无法建立连接", Toast.LENGTH_LONG).show();
+            }
 
             Log.d("FlyingChess", autoID + " " + autoPassword);
             try {
@@ -345,7 +366,13 @@ public class LoginAndRegisterActivity extends FlyingChessActivity {
                 return;
             }
         } else {
-            mp.sendHandler = new EmptyHandler();
+            try {
+                mp.sendHandler = new EmptyHandler();
+                mp.ms.mainHandler = new EmptyHandler();
+            }
+            catch (Exception e) {
+                Toast.makeText(context, "无法建立连接", Toast.LENGTH_LONG).show();
+            }
         }
 
     }

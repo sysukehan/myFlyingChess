@@ -29,7 +29,7 @@ import java.util.Vector;
 import com.test.androidgroup.flyingchess.Resource.*;
 
 
-public class GameActivity extends Activity implements View.OnTouchListener{
+public class GameActivity extends FlyingChessActivity implements View.OnTouchListener{
 
     private TextView title;//标题上的字
     private LinearLayout game_layout;
@@ -38,8 +38,8 @@ public class GameActivity extends Activity implements View.OnTouchListener{
     private RelativeLayout game_information;
     int[] colorToPic = new int[]{
             R.mipmap.f_green,
-            R.mipmap.f_red,
             R.mipmap.f_blue,
+            R.mipmap.f_red,
             R.mipmap.f_orange,
     };
     private ImageView dice;
@@ -111,50 +111,54 @@ public class GameActivity extends Activity implements View.OnTouchListener{
     }
 
 
-    void init(){
+    void init() {
         game_layout = (LinearLayout) findViewById(R.id.game_layout);
 
         title = (TextView) findViewById(R.id.title);
         title.setText("游戏中");
 
         //测试，默认有4个玩家
-        Vector<Chess> chessSetRed = new Vector<>();
+
         Vector<Chess> chessSetGreen = new Vector<>();
-        chessSetGreen.add(new Chess(Color.Green,null,R.id.chess_green1));
-        chessSetGreen.add(new Chess(Color.Green,null,R.id.chess_green2));
-        chessSetGreen.add(new Chess(Color.Green,null,R.id.chess_green3));
-        chessSetGreen.add(new Chess(Color.Green,null,R.id.chess_green4));
-        players[0] = new Player(Color.Green,chessSetGreen,false);
-        chessSetRed.add(new Chess(Color.Red,null,R.id.chess_red1));
-        chessSetRed.add(new Chess(Color.Red,null,R.id.chess_red2));
-        chessSetRed.add(new Chess(Color.Red,null,R.id.chess_red3));
-        chessSetRed.add(new Chess(Color.Red,null,R.id.chess_red4));
-        players[1] = new Player(Color.Red,chessSetRed,true);
+        chessSetGreen.add(new Chess(Color.Green, null, R.id.chess_green1));
+        chessSetGreen.add(new Chess(Color.Green, null, R.id.chess_green2));
+        chessSetGreen.add(new Chess(Color.Green, null, R.id.chess_green3));
+        chessSetGreen.add(new Chess(Color.Green, null, R.id.chess_green4));
+        players[0] = new Player(Color.Green, chessSetGreen, false);
         Vector<Chess> chessSetBlue = new Vector<>();
-        chessSetBlue.add(new Chess(Color.Blue,null,R.id.chess_blue1));
-        chessSetBlue.add(new Chess(Color.Blue,null,R.id.chess_blue2));
-        chessSetBlue.add(new Chess(Color.Blue,null,R.id.chess_blue3));
-        chessSetBlue.add(new Chess(Color.Blue,null,R.id.chess_blue4));
-        players[2] = new Player(Color.Blue,chessSetBlue,true);
+        chessSetBlue.add(new Chess(Color.Blue, null, R.id.chess_blue1));
+        chessSetBlue.add(new Chess(Color.Blue, null, R.id.chess_blue2));
+        chessSetBlue.add(new Chess(Color.Blue, null, R.id.chess_blue3));
+        chessSetBlue.add(new Chess(Color.Blue, null, R.id.chess_blue4));
+        players[1] = new Player(Color.Blue, chessSetBlue, true);
+        Vector<Chess> chessSetRed = new Vector<>();
+        chessSetRed.add(new Chess(Color.Red, null, R.id.chess_red1));
+        chessSetRed.add(new Chess(Color.Red, null, R.id.chess_red2));
+        chessSetRed.add(new Chess(Color.Red, null, R.id.chess_red3));
+        chessSetRed.add(new Chess(Color.Red, null, R.id.chess_red4));
+        players[2] = new Player(Color.Red, chessSetRed, true);
         Vector<Chess> chessSetOrange = new Vector<>();
-        chessSetOrange.add(new Chess(Color.Orange,null,R.id.chess_orange1));
-        chessSetOrange.add(new Chess(Color.Orange,null,R.id.chess_orange2));
-        chessSetOrange.add(new Chess(Color.Orange,null,R.id.chess_orange3));
-        chessSetOrange.add(new Chess(Color.Orange,null,R.id.chess_orange4));
-        players[3] = new Player(Color.Orange,chessSetOrange,true);
+        chessSetOrange.add(new Chess(Color.Orange, null, R.id.chess_orange1));
+        chessSetOrange.add(new Chess(Color.Orange, null, R.id.chess_orange2));
+        chessSetOrange.add(new Chess(Color.Orange, null, R.id.chess_orange3));
+        chessSetOrange.add(new Chess(Color.Orange, null, R.id.chess_orange4));
+        players[3] = new Player(Color.Orange, chessSetOrange, true);
 
         if (mode == 2) {
-            gameManager = new GameManager(players[0],this, false);
+            gameManager = new GameManager(players[0], this, false);
         } else {
-            gameManager = new GameManager(players[0],this, true);
+            gameManager = new GameManager(players[0], this, true);
         }
 
-        for(int i = 0; i <= player_count - 1; ++i ) {
+
+        for (int i = 0; i < player_count; ++i) {
             try {
                 gameManager.addPlayer(players[i]);
             }
-            catch (Exception e){}
+            catch (Exception e) {}
         }
+
+
         try {
             gameManager.init(9);
         }
@@ -180,8 +184,8 @@ public class GameActivity extends Activity implements View.OnTouchListener{
         game_information = (RelativeLayout)findViewById(R.id.game_information);
         switch (players[0].getColor().ordinal()){
             case 0:game_information.setBackgroundResource(R.color.f_green);break;
-            case 1:game_information.setBackgroundResource(R.color.f_red);break;
-            case 2:game_information.setBackgroundResource(R.color.f_blue);break;
+            case 1:game_information.setBackgroundResource(R.color.f_blue);break;
+            case 2:game_information.setBackgroundResource(R.color.f_red);break;
             case 3:game_information.setBackgroundResource(R.color.f_orange);break;
             default:game_information.setBackgroundResource(R.color.f_green);break;
         }
@@ -256,63 +260,64 @@ public class GameActivity extends Activity implements View.OnTouchListener{
                 chesslocationID[3] = 92;
                 addChess(chessGreen4, chesslocationID[3]);
 
-                chessRed1 = new ImageView(GameActivity.this);
-                chessRed1.setImageResource(R.drawable.f_red);
-                chessRed1.setId(R.id.chess_red1);
-                chessRed1.setOnTouchListener(GameActivity.this);
-                chesslocationID[4] = 81;
-                addChess(chessRed1, chesslocationID[4]);
+                chessBlue1 = new ImageView(GameActivity.this);
+                chessBlue1.setImageResource(R.drawable.f_blue);
+                chessBlue1.setId(R.id.chess_blue1);
+                chessBlue1.setOnTouchListener(GameActivity.this);
+                chesslocationID[4] = 82;
+                addChess(chessBlue1, chesslocationID[4]);
 
-                chessRed2 = new ImageView(GameActivity.this);
-                chessRed2.setImageResource(R.drawable.f_red);
-                chessRed2.setId(R.id.chess_red2);
-                chessRed2.setOnTouchListener(GameActivity.this);
-                chesslocationID[5] = 85;
-                addChess(chessRed2, chesslocationID[5]);
+                chessBlue2 = new ImageView(GameActivity.this);
+                chessBlue2.setImageResource(R.drawable.f_blue);
+                chessBlue2.setId(R.id.chess_blue2);
+                chessBlue2.setOnTouchListener(GameActivity.this);
+                chesslocationID[5] = 86;
+                addChess(chessBlue2, chesslocationID[5]);
 
-                chessRed3 = new ImageView(GameActivity.this);
-                chessRed3.setImageResource(R.drawable.f_red);
-                chessRed3.setId(R.id.chess_red3);
-                chessRed3.setOnTouchListener(GameActivity.this);
-                chesslocationID[6] = 89;
-                addChess(chessRed3, chesslocationID[6]);
+                chessBlue3 = new ImageView(GameActivity.this);
+                chessBlue3.setImageResource(R.drawable.f_blue);
+                chessBlue3.setId(R.id.chess_blue3);
+                chessBlue3.setOnTouchListener(GameActivity.this);
+                chesslocationID[6] = 90;
+                addChess(chessBlue3, chesslocationID[6]);
 
-                chessRed4 = new ImageView(GameActivity.this);
-                chessRed4.setImageResource(R.drawable.f_red);
-                chessRed4.setId(R.id.chess_red4);
-                chessRed4.setOnTouchListener(GameActivity.this);
-                chesslocationID[7] = 93;
-                addChess(chessRed4, chesslocationID[7]);
+                chessBlue4 = new ImageView(GameActivity.this);
+                chessBlue4.setImageResource(R.drawable.f_blue);
+                chessBlue4.setId(R.id.chess_blue4);
+                chessBlue4.setOnTouchListener(GameActivity.this);
+                chesslocationID[7] = 94;
+                addChess(chessBlue4, chesslocationID[7]);
 
                 if(player_count >= 3) {
-                    chessBlue1 = new ImageView(GameActivity.this);
-                    chessBlue1.setImageResource(R.drawable.f_blue);
-                    chessBlue1.setId(R.id.chess_blue1);
-                    chessBlue1.setOnTouchListener(GameActivity.this);
-                    chesslocationID[8] = 82;
-                    addChess(chessBlue1, chesslocationID[8]);
+                    chessRed1 = new ImageView(GameActivity.this);
+                    chessRed1.setImageResource(R.drawable.f_red);
+                    chessRed1.setId(R.id.chess_red1);
+                    chessRed1.setOnTouchListener(GameActivity.this);
+                    chesslocationID[8] = 81;
+                    addChess(chessRed1, chesslocationID[8]);
 
-                    chessBlue2 = new ImageView(GameActivity.this);
-                    chessBlue2.setImageResource(R.drawable.f_blue);
-                    chessBlue2.setId(R.id.chess_blue2);
-                    chessBlue2.setOnTouchListener(GameActivity.this);
-                    chesslocationID[9] = 86;
-                    addChess(chessBlue2, chesslocationID[9]);
+                    chessRed2 = new ImageView(GameActivity.this);
+                    chessRed2.setImageResource(R.drawable.f_red);
+                    chessRed2.setId(R.id.chess_red2);
+                    chessRed2.setOnTouchListener(GameActivity.this);
+                    chesslocationID[9] = 85;
+                    addChess(chessRed2, chesslocationID[9]);
 
-                    chessBlue3 = new ImageView(GameActivity.this);
-                    chessBlue3.setImageResource(R.drawable.f_blue);
-                    chessBlue3.setId(R.id.chess_blue3);
-                    chessBlue3.setOnTouchListener(GameActivity.this);
-                    chesslocationID[10] = 90;
-                    addChess(chessBlue3, chesslocationID[10]);
+                    chessRed3 = new ImageView(GameActivity.this);
+                    chessRed3.setImageResource(R.drawable.f_red);
+                    chessRed3.setId(R.id.chess_red3);
+                    chessRed3.setOnTouchListener(GameActivity.this);
+                    chesslocationID[10] = 89;
+                    addChess(chessRed3, chesslocationID[10]);
 
-                    chessBlue4 = new ImageView(GameActivity.this);
-                    chessBlue4.setImageResource(R.drawable.f_blue);
-                    chessBlue4.setId(R.id.chess_blue4);
-                    chessBlue4.setOnTouchListener(GameActivity.this);
-                    chesslocationID[11] = 94;
-                    addChess(chessBlue4, chesslocationID[11]);
+                    chessRed4 = new ImageView(GameActivity.this);
+                    chessRed4.setImageResource(R.drawable.f_red);
+                    chessRed4.setId(R.id.chess_red4);
+                    chessRed4.setOnTouchListener(GameActivity.this);
+                    chesslocationID[11] = 93;
+                    addChess(chessRed4, chesslocationID[11]);
                 }
+
 
                 if(player_count >= 4) {
                     chessOrange1 = new ImageView(GameActivity.this);
@@ -406,21 +411,24 @@ public class GameActivity extends Activity implements View.OnTouchListener{
         animationDrawable.start();
     }
 
-    void moveToNext(int chessID,int currentID,int nextID){
+    void moveToNext(int chessID,int currentID,int nextID, int time){
 
+        /*Log.i("move","1");
+        Log.i("chessID", String.valueOf(chessID));
+        Log.i("currentID", String.valueOf(currentID));
+        Log.i("nextID", String.valueOf(nextID));*/
         ImageView chess = (ImageView)findViewById(chessID);
         int currentX = (int) ((( boardHeight) * ((float)chesslocationX[currentID] - halfChessPercentage))+0.5);
         int currentY = (int) ((( boardHeight) * ((float)chesslocationY[currentID] - halfChessPercentage))+0.5);
 
         int nextX = (int) ((( boardHeight) * ((float)chesslocationX[nextID] - halfChessPercentage))+0.5);
         int nextY = (int) ((( boardWidth) * ((float)chesslocationY[nextID] - halfChessPercentage))+0.5);
-
         ObjectAnimator oa1=ObjectAnimator.ofFloat(chess, "x", currentX, nextX);
-        oa1.setDuration(1000);
+        oa1.setDuration(time);
         oa1.start();
 
         ObjectAnimator oa2=ObjectAnimator.ofFloat(chess, "y", currentY, nextY);
-        oa2.setDuration(1000);
+        oa2.setDuration(time);
         oa2.start();
     }
 
@@ -449,6 +457,12 @@ public class GameActivity extends Activity implements View.OnTouchListener{
             chesslocationX[i] = Float.parseFloat(rawdata[i*3+1]);
             chesslocationY[i] = Float.parseFloat(rawdata[i*3+2]);
         }
+    }
+
+    void setDoneCell(int rid){
+        ImageView cell_view = (ImageView) findViewById(rid);
+        cell_view.setImageResource(R.drawable.f_done);
+        cell_view.setEnabled(false);
     }
 
 }

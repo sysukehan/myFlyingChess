@@ -10,6 +10,7 @@ public class Chess {
 	public boolean _flew;
 	public boolean is_goingBack;
 	public boolean is_Completed;
+	public boolean is_finishedThisTurn;
     public int _rid;
 	public Chess(Color color, Cell cell, int rid) {
 		_color = color;
